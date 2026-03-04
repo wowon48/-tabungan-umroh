@@ -1,55 +1,83 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <title>Detail Tabungan Jamaah</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
+body {
+  font-family: Arial, sans-serif;
+  background: #f8f5f5;
+  margin: 0;
+  padding: 0;
+}
 
-  <div class="container">
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 20px;
+}
 
-    <div class="header">
-      <img src="logo.png" class="logo">
-      <h2>Detail Tabungan Jamaah</h2>
-    </div>
+.center {
+  text-align: center;
+  margin-top: 100px;
+}
 
-    <div id="loading" class="loading">
-      Memuat data...
-    </div>
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+  margin-bottom: 20px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
 
-    <div id="content" class="content hidden">
+.header-card {
+  background: #6d1b1b;
+  color: white;
+}
 
-      <div class="card">
-        <h3 id="nama">Nama Jamaah</h3>
-        <p id="va"></p>
-      </div>
+.total-card {
+  text-align: center;
+  background: linear-gradient(135deg, #7b1e1e, #a83232);
+  color: white;
+}
 
-      <div class="card total-card">
-        <p>Total Tabungan</p>
-        <h1 id="total">Rp 0</h1>
-      </div>
+.total-card h1 {
+  font-size: 42px;
+  margin: 10px 0;
+  letter-spacing: 1px;
+}
 
-      <div class="card">
-        <h3>Riwayat Transaksi</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Tanggal</th>
-              <th>Nominal</th>
-              <th>Saldo</th>
-            </tr>
-          </thead>
-          <tbody id="transaksiBody">
-          </tbody>
-        </table>
-      </div>
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
 
-    </div>
+th {
+  background: #7b1e1e;
+  color: white;
+  padding: 12px;
+  text-transform: uppercase;
+  font-size: 14px;
+}
 
-  </div>
+td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
 
-  <script src="script.js"></script>
-</body>
-</html>
+tr:hover {
+  background: #fff4f4;
+}
+
+.error {
+  color: #b71c1c;
+  text-align: center;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+/* Mobile Friendly */
+@media (max-width: 600px) {
+  .total-card h1 {
+    font-size: 28px;
+  }
+
+  th, td {
+    font-size: 13px;
+    padding: 8px;
+  }
+}
