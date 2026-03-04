@@ -1,156 +1,63 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Data Jamaah</title>
-
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f4f6f9;
-  margin: 0;
-  padding: 20px;
-}
-
-.container {
-  max-width: 900px;
-  margin: auto;
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-h2 {
-  margin-top: 0;
-}
-
-.card {
-  background: #f9fafb;
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 15px;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-
-table th, table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: center;
-}
-
-table th {
-  background: #2c3e50;
-  color: white;
-}
-
-.error {
-  color: red;
-  text-align: center;
-  font-weight: bold;
-}
-</style>
-</head>
-
-<body>
-
-<div class="container">
-  <h2>Data Tabungan Jamaah</h2>
-  <div id="content">Memuat data...</div>
-</div>
-
 <script>
-const URL_WEBAPP = "https://script.googleusercontent.com/macros/s/ISI_DENGAN_ID_ANDA/exec";
+document.addEventListener("DOMContentLoaded", function () {
 
-function formatRupiah(angka) {
-  return new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR'
-  }).format(angka);
-}
+  const params = new URLSearchParams(window.location.search);
+  const userId = params.get("user_id");
+  const noVA = params.get("no_va");
 
-function getQueryParam(param) {
-  const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get(param);
-}
+  if (!userId || !noVA) {
+    alert("Parameter tidak lengkap");
+    return;
+  }
 
-const userId = getQueryParam("user_id");
-const noVa   = getQueryParam("no_va");
+  const url = "https://script.google.com/macros/s/AKfycbzk052mEIwZUHZLcjYcMmHqOPWcARXLS-XUE1hjUYhWP0_P61F6PKIn-HYG21fry0AD/exec";
 
-if (!userId || !noVa) {
-  document.getElementById("content").innerHTML =
-    "<div class='error'>Parameter tidak lengkap.</div>";
-} else {
-
-  fetch(`${URL_WEBAPP}?user_id=${encodeURIComponent(userId)}&no_va=${encodeURIComponent(noVa)}`)
+  fetch(`${url}?user_id=${encodeURIComponent(userId)}&no_va=${encodeURIComponent(noVA)}`)
     .then(res => res.json())
     .then(data => {
 
       if (data.status !== "success") {
-        document.getElementById("content").innerHTML =
-          `<div class='error'>${data.message}</div>`;
+        alert("Data tidak ditemukan");
         return;
       }
 
-      let anggotaHTML = "";
-      data.anggota.forEach(a => {
-        anggotaHTML += `<li>${a.nama} (${a.jk})</li>`;
+      // Isi data utama
+      document.getElementById("nama_kepala").innerText = data.nama_kepala;
+      document.getElementById("no_va_text").innerText = data.no_va;
+      document.getElementById("catatan").innerText = data.catatan;
+      document.getElementById("total_tabungan").innerText =
+        "Rp " + data.total_tabungan.toLocaleString("id-ID");
+
+      // Isi anggota
+      let anggotaList = document.getElementById("anggota_list");
+      anggotaList.innerHTML = "";
+
+      data.anggota.forEach((a, index) => {
+        anggotaList.innerHTML += `<li>${index+1}. ${a.nama} - ${a.jk}</li>`;
       });
 
-      let transaksiHTML = "";
-      data.transaksi.forEach(t => {
-        transaksiHTML += `
+      // Isi transaksi
+      let tbody = document.getElementById("tbody_transaksi");
+      tbody.innerHTML = "";
+
+      data.transaksi.forEach(trx => {
+
+        const tanggal = new Date(trx.tanggal).toISOString().split("T")[0];
+
+        tbody.innerHTML += `
           <tr>
-            <td>${t.tanggal}</td>
-            <td>${formatRupiah(t.nominal)}</td>
-            <td>${formatRupiah(t.saldo)}</td>
+            <td>${tanggal}</td>
+            <td>+ ${trx.nominal.toLocaleString("id-ID")}</td>
+            <td>${trx.saldo.toLocaleString("id-ID")}</td>
           </tr>
         `;
       });
 
-      document.getElementById("content").innerHTML = `
-        <div class="card">
-          <strong>Nama Kepala:</strong> ${data.nama_kepala}<br>
-          <strong>No VA:</strong> ${data.no_va}<br>
-          <strong>Total Tabungan:</strong> ${formatRupiah(data.total_tabungan)}<br>
-          <strong>Catatan:</strong> ${data.catatan || "-"}
-        </div>
-
-        <div class="card">
-          <strong>Anggota:</strong>
-          <ul>${anggotaHTML}</ul>
-        </div>
-
-        <div class="card">
-          <strong>Riwayat Transaksi:</strong>
-          <table>
-            <thead>
-              <tr>
-                <th>Tanggal</th>
-                <th>Nominal</th>
-                <th>Saldo</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${transaksiHTML}
-            </tbody>
-          </table>
-        </div>
-      `;
     })
     .catch(err => {
-      document.getElementById("content").innerHTML =
-        "<div class='error'>Gagal mengambil data.</div>";
       console.error(err);
+      alert("Gagal mengambil data dari server");
     });
-}
-</script>
 
-</body>
-</html>
+});
+</script>
