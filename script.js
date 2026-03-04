@@ -4,7 +4,7 @@ function formatRupiah(angka) {
   return new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR"
-  }).format(angka);
+  }).format(angka || 0);
 }
 
 function getTokenFromURL() {
@@ -21,55 +21,77 @@ async function loadData() {
   }
 
   try {
-    const response = await fetch(`${API_URL}?token=${token}`);
+    const response = await fetch(`${API_URL}?token=${token}`, {
+      method: "GET",
+      mode: "cors"
+    });
+
+    if (!response.ok) {
+      showError("Gagal mengambil data.");
+      return;
+    }
+
     const data = await response.json();
 
-    if (data.status !== "success") {
+    if (!data || data.status !== "success") {
       showError("Token tidak valid.");
       return;
     }
 
+    // Sembunyikan loading, tampilkan konten
     document.getElementById("loading").style.display = "none";
     document.getElementById("content").style.display = "block";
 
-    document.getElementById("nama_kepala").innerText = data.nama_kepala;
-    document.getElementById("no_va").innerText = data.no_va;
-    document.getElementById("catatan").innerText = data.catatan;
+    // Isi data utama
+    document.getElementById("nama_kepala").innerText = data.nama_kepala || "-";
+    document.getElementById("no_va").innerText = data.no_va || "-";
+    document.getElementById("catatan").innerText = data.catatan || "-";
     document.getElementById("total_tabungan").innerText =
       formatRupiah(data.total_tabungan);
 
-    // Anggota
+    // ======================
+    // ANGGOTA
+    // ======================
     const anggotaList = document.getElementById("anggota_list");
     anggotaList.innerHTML = "";
-    data.anggota.forEach(a => {
-      const li = document.createElement("li");
-      li.innerText = `${a.nama} (${a.jk})`;
-      anggotaList.appendChild(li);
-    });
 
-    // Transaksi
+    if (Array.isArray(data.anggota)) {
+      data.anggota.forEach(a => {
+        const li = document.createElement("li");
+        li.innerText = `${a.nama} (${a.jk})`;
+        anggotaList.appendChild(li);
+      });
+    }
+
+    // ======================
+    // TRANSAKSI
+    // ======================
     const transaksiTable = document.getElementById("transaksi_table");
     transaksiTable.innerHTML = "";
-    data.transaksi.forEach(t => {
-      const row = `
-        <tr>
-          <td>${new Date(t.tanggal).toLocaleDateString("id-ID")}</td>
-          <td>${formatRupiah(t.nominal)}</td>
-          <td>${formatRupiah(t.saldo)}</td>
-        </tr>
-      `;
-      transaksiTable.innerHTML += row;
-    });
+
+    if (Array.isArray(data.transaksi)) {
+      data.transaksi.forEach(t => {
+        const row = `
+          <tr>
+            <td>${new Date(t.tanggal).toLocaleDateString("id-ID")}</td>
+            <td>${formatRupiah(t.nominal)}</td>
+            <td>${formatRupiah(t.saldo)}</td>
+          </tr>
+        `;
+        transaksiTable.innerHTML += row;
+      });
+    }
 
   } catch (err) {
+    console.error(err);
     showError("Terjadi kesalahan koneksi.");
   }
 }
 
 function showError(msg) {
   document.getElementById("loading").style.display = "none";
+  document.getElementById("content").style.display = "none";
   document.getElementById("error").innerText = msg;
 }
 
 loadData();
-
