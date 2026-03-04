@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>Mutasi Tabungan</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>Mutasi Tabungan</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -13,15 +13,15 @@
 
   <div id="content" style="display:none;">
 
-    <div class="card header-card">
+    <div class="card">
       <h2 id="nama_kepala"></h2>
       <p>No VA: <span id="no_va"></span></p>
       <p>Keterangan: <span id="catatan"></span></p>
     </div>
 
-    <div class="card total-card">
+    <div class="card">
       <h3>Total Tabungan</h3>
-      <h1 id="total_tabungan"></h1>
+      <h1 id="total_tabungan" class="total"></h1>
     </div>
 
     <div class="card">
@@ -49,6 +49,85 @@
 
 </div>
 
-<script src="script.js"></script>
+<script>
+const loading = document.getElementById("loading");
+const content = document.getElementById("content");
+const errorDiv = document.getElementById("error");
+
+// Ambil parameter URL
+const params = new URLSearchParams(window.location.search);
+const userId = params.get("user_id");
+const noVa = params.get("no_va");
+
+if (!userId || !noVa) {
+  loading.style.display = "none";
+  errorDiv.innerText = "User ID atau No VA tidak ditemukan.";
+} else {
+
+  fetch("ISI_URL_WEBAPP_ANDA_DISINI"
+    + "?user_id=" + encodeURIComponent(userId)
+    + "&no_va=" + encodeURIComponent(noVa))
+
+  .then(res => res.json())
+  .then(res => {
+
+    loading.style.display = "none";
+
+    if (res.status !== "success") {
+      errorDiv.innerText = res.message;
+      return;
+    }
+
+    // HEADER
+    document.getElementById("nama_kepala").innerText = res.nama_kepala;
+    document.getElementById("no_va").innerText = res.no_va;
+    document.getElementById("catatan").innerText = res.catatan;
+
+    document.getElementById("total_tabungan").innerText =
+      "Rp " + Number(res.total_tabungan).toLocaleString("id-ID");
+
+    // ANGGOTA
+    const anggotaList = document.getElementById("anggota_list");
+    anggotaList.innerHTML = "";
+
+    if (res.anggota.length === 0) {
+      anggotaList.innerHTML = "<li>Tidak ada anggota</li>";
+    } else {
+      res.anggota.forEach(a => {
+        anggotaList.innerHTML +=
+          "<li>" + a.nama + " (" + a.jk + ")</li>";
+      });
+    }
+
+    // TRANSAKSI
+    const table = document.getElementById("transaksi_table");
+    table.innerHTML = "";
+
+    if (res.transaksi.length === 0) {
+      table.innerHTML =
+        "<tr><td colspan='3'>Belum ada transaksi</td></tr>";
+    } else {
+      res.transaksi.forEach(t => {
+        table.innerHTML += `
+          <tr>
+            <td>${t.tanggal}</td>
+            <td>Rp ${Number(t.nominal).toLocaleString("id-ID")}</td>
+            <td>Rp ${Number(t.saldo).toLocaleString("id-ID")}</td>
+          </tr>
+        `;
+      });
+    }
+
+    content.style.display = "block";
+
+  })
+  .catch(err => {
+    loading.style.display = "none";
+    errorDiv.innerText = "Gagal mengambil data.";
+    console.error(err);
+  });
+}
+</script>
+
 </body>
 </html>
