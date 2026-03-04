@@ -21,10 +21,7 @@ async function loadData() {
   }
 
   try {
-    const response = await fetch(`${API_URL}?token=${token}`, {
-      method: "GET",
-      mode: "cors"
-    });
+    const response = await fetch(`${API_URL}?token=${token}`);
 
     if (!response.ok) {
       showError("Gagal mengambil data.");
@@ -33,16 +30,19 @@ async function loadData() {
 
     const data = await response.json();
 
-    if (!data || data.nama_kepala") {
-      showError("Data tidak ditemukan.");
+    // VALIDASI SESUAI APPS SCRIPT
+    if (!data || data.status !== "success") {
+      showError(data.message || "Data tidak ditemukan.");
       return;
     }
 
-    // Sembunyikan loading, tampilkan konten
+    // SEMBUNYIKAN LOADING
     document.getElementById("loading").style.display = "none";
     document.getElementById("content").style.display = "block";
 
-    // Isi data utama
+    // ======================
+    // DATA UTAMA
+    // ======================
     document.getElementById("nama_kepala").innerText = data.nama_kepala || "-";
     document.getElementById("no_va").innerText = data.no_va || "-";
     document.getElementById("catatan").innerText = data.catatan || "-";
@@ -55,12 +55,14 @@ async function loadData() {
     const anggotaList = document.getElementById("anggota_list");
     anggotaList.innerHTML = "";
 
-    if (Array.isArray(data.anggota)) {
+    if (Array.isArray(data.anggota) && data.anggota.length > 0) {
       data.anggota.forEach(a => {
         const li = document.createElement("li");
         li.innerText = `${a.nama} (${a.jk})`;
         anggotaList.appendChild(li);
       });
+    } else {
+      anggotaList.innerHTML = "<li>Tidak ada anggota</li>";
     }
 
     // ======================
@@ -69,7 +71,7 @@ async function loadData() {
     const transaksiTable = document.getElementById("transaksi_table");
     transaksiTable.innerHTML = "";
 
-    if (Array.isArray(data.transaksi)) {
+    if (Array.isArray(data.transaksi) && data.transaksi.length > 0) {
       data.transaksi.forEach(t => {
         const row = `
           <tr>
@@ -80,6 +82,12 @@ async function loadData() {
         `;
         transaksiTable.innerHTML += row;
       });
+    } else {
+      transaksiTable.innerHTML = `
+        <tr>
+          <td colspan="3" style="text-align:center;">Belum ada transaksi</td>
+        </tr>
+      `;
     }
 
   } catch (err) {
@@ -95,4 +103,3 @@ function showError(msg) {
 }
 
 loadData();
-
