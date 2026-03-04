@@ -2,54 +2,53 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Detail Tabungan Jamaah</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mutasi Tabungan</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <div class="container">
+<div class="container">
 
-    <div class="header">
-      <img src="logo.png" class="logo">
-      <h2>Detail Tabungan Jamaah</h2>
+  <div id="loading">Memuat data...</div>
+
+  <div id="content" style="display:none;">
+
+    <div class="card header-card">
+      <h2 id="nama_kepala"></h2>
+      <p>No VA: <span id="no_va"></span></p>
+      <p>Keterangan: <span id="catatan"></span></p>
     </div>
 
-    <div id="loading" class="loading">
-      Memuat data...
+    <div class="card total-card">
+      <h3>Total Tabungan</h3>
+      <h1 id="total_tabungan"></h1>
     </div>
 
-    <div id="content" class="content hidden">
+    <div class="card">
+      <h3>Anggota Jamaah</h3>
+      <ul id="anggota_list"></ul>
+    </div>
 
-      <div class="card">
-        <h3 id="nama">Nama Jamaah</h3>
-        <p id="va"></p>
-      </div>
-
-      <div class="card total-card">
-        <p>Total Tabungan</p>
-        <h1 id="total">Rp 0</h1>
-      </div>
-
-      <div class="card">
-        <h3>Riwayat Transaksi</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Tanggal</th>
-              <th>Nominal</th>
-              <th>Saldo</th>
-            </tr>
-          </thead>
-          <tbody id="transaksiBody">
-          </tbody>
-        </table>
-      </div>
-
+    <div class="card">
+      <h3>Mutasi Transaksi</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Tanggal</th>
+            <th>Nominal</th>
+            <th>Saldo</th>
+          </tr>
+        </thead>
+        <tbody id="transaksi_table"></tbody>
+      </table>
     </div>
 
   </div>
 
-  <script src="script.js"></script>
+  <div id="error" class="error"></div>
+
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
