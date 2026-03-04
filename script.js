@@ -33,8 +33,8 @@ async function loadData() {
 
     const data = await response.json();
 
-    if (!data || data.status !== "success") {
-      showError("Token tidak valid.");
+    if (!data || data.nama_kepala") {
+      showError("Data tidak ditemukan.");
       return;
     }
 
@@ -95,3 +95,4 @@ function showError(msg) {
 }
 
 loadData();
+
