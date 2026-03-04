@@ -1,73 +1,63 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyZhfz0tKNcgvzS8LlfwfR-TauAfF8IN5ayTELfJ7Wh4eTFz355Rr3rUxQrXyL-isw9/exec";
+const loading = document.getElementById("loading");
+const content = document.getElementById("content");
+const errorDiv = document.getElementById("error");
 
-function cekData() {
-  const userId = document.getElementById("userId").value.trim();
-  const noVA = document.getElementById("noVA").value.trim();
+const params = new URLSearchParams(window.location.search);
+const userId = params.get("user_id");
+const noVa = params.get("no_va");
 
-  if (!userId || !noVA) {
-    alert("User ID dan No VA wajib diisi");
-    return;
-  }
+if (!userId || !noVa) {
+  errorDiv.innerText = "User ID atau No VA tidak ditemukan.";
+  loading.style.display = "none";
+} else {
 
-  localStorage.setItem("userId", userId);
-  localStorage.setItem("noVA", noVA);
+  fetch("https://script.google.com/macros/s/AKfycbxaIWRX8I7J1hWx3aSfmWMXEObSww8COhwa_W2bWz_xKIolS6zKVfawuSpST5376A2L/exec"
+    + "&user_id=" + userId
+    + "&no_va=" + noVa)
 
-  window.location.href = "jamaah.html";
-}
+    .then(res => res.json())
+    .then(res => {
 
-document.addEventListener("DOMContentLoaded", function () {
-  if (window.location.pathname.includes("jamaah.html")) {
-    loadData();
-  }
-});
+      loading.style.display = "none";
 
-function loadData() {
+      if (res.status !== "success") {
+        errorDiv.innerText = "Data tidak ditemukan";
+        return;
+      }
 
-  const userId = localStorage.getItem("userId");
-  const noVA = localStorage.getItem("noVA");
+      const data = res.data;
 
-  fetch(API_URL +
-    "?user_id=" + encodeURIComponent(userId) +
-    "&no_va=" + encodeURIComponent(noVA)
-  )
-  .then(res => res.json())
-  .then(data => {
+      document.getElementById("nama_kepala").innerText = data.nama;
+      document.getElementById("no_va").innerText = data.no_va;
+      document.getElementById("catatan").innerText = data.catatan;
+      document.getElementById("total_tabungan").innerText =
+        "Rp " + parseInt(data.total_tabungan).toLocaleString("id-ID");
 
-    if (data.status !== "success") {
-      alert("Data tidak ditemukan");
-      window.location.href = "index.html";
-      return;
-    }
+      // Anggota
+      const anggotaList = document.getElementById("anggota_list");
+      anggotaList.innerHTML = "";
+      data.anggota.forEach(a => {
+        anggotaList.innerHTML += "<li>" + a + "</li>";
+      });
 
-    document.getElementById("namaKepala").innerText = data.nama_kepala;
-    document.getElementById("noVa").innerText = data.no_va;
-    document.getElementById("catatan").innerText = data.catatan;
+      // Transaksi
+      const table = document.getElementById("transaksi_table");
+      table.innerHTML = "";
+      data.transaksi.forEach(t => {
+        table.innerHTML += `
+          <tr>
+            <td>${t.tanggal}</td>
+            <td>Rp ${parseInt(t.nominal).toLocaleString("id-ID")}</td>
+            <td>Rp ${parseInt(t.saldo).toLocaleString("id-ID")}</td>
+          </tr>
+        `;
+      });
 
-    document.getElementById("totalTabungan").innerText =
-      "Rp " + data.total_tabungan.toLocaleString("id-ID");
-
-    let anggotaHTML = "";
-    data.anggota.forEach(a => {
-      anggotaHTML += `<li>${a.nama} (${a.jk})</li>`;
+      content.style.display = "block";
+    })
+    .catch(err => {
+      loading.style.display = "none";
+      errorDiv.innerText = "Gagal mengambil data.";
+      console.error(err);
     });
-    document.getElementById("anggotaList").innerHTML = anggotaHTML;
-
-    let transaksiHTML = "";
-    data.transaksi.forEach(t => {
-      transaksiHTML += `
-        <tr>
-          <td>${new Date(t.tanggal).toLocaleDateString("id-ID")}</td>
-          <td>Rp ${t.nominal.toLocaleString("id-ID")}</td>
-          <td>Rp ${t.saldo.toLocaleString("id-ID")}</td>
-        </tr>
-      `;
-    });
-
-    document.getElementById("transaksiTable").innerHTML = transaksiHTML;
-
-  })
-  .catch(err => {
-    console.error(err);
-    alert("Gagal koneksi ke server");
-  });
 }
