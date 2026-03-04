@@ -2,130 +2,153 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Mutasi Tabungan</title>
-<link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Jamaah</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f9;
+  margin: 0;
+  padding: 20px;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+h2 {
+  margin-top: 0;
+}
+
+.card {
+  background: #f9fafb;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+table th, table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+table th {
+  background: #2c3e50;
+  color: white;
+}
+
+.error {
+  color: red;
+  text-align: center;
+  font-weight: bold;
+}
+</style>
 </head>
+
 <body>
 
 <div class="container">
-
-  <div id="loading">Memuat data...</div>
-
-  <div id="content" style="display:none;">
-
-    <div class="card">
-      <h2 id="nama_kepala"></h2>
-      <p>No VA: <span id="no_va"></span></p>
-      <p>Keterangan: <span id="catatan"></span></p>
-    </div>
-
-    <div class="card">
-      <h3>Total Tabungan</h3>
-      <h1 id="total_tabungan" class="total"></h1>
-    </div>
-
-    <div class="card">
-      <h3>Anggota Jamaah</h3>
-      <ul id="anggota_list"></ul>
-    </div>
-
-    <div class="card">
-      <h3>Mutasi Transaksi</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Tanggal</th>
-            <th>Nominal</th>
-            <th>Saldo</th>
-          </tr>
-        </thead>
-        <tbody id="transaksi_table"></tbody>
-      </table>
-    </div>
-
-  </div>
-
-  <div id="error" class="error"></div>
-
+  <h2>Data Tabungan Jamaah</h2>
+  <div id="content">Memuat data...</div>
 </div>
 
 <script>
-const loading = document.getElementById("loading");
-const content = document.getElementById("content");
-const errorDiv = document.getElementById("error");
+const URL_WEBAPP = "https://script.googleusercontent.com/macros/s/ISI_DENGAN_ID_ANDA/exec";
 
-// Ambil parameter URL
-const params = new URLSearchParams(window.location.search);
-const userId = params.get("user_id");
-const noVa = params.get("no_va");
+function formatRupiah(angka) {
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR'
+  }).format(angka);
+}
+
+function getQueryParam(param) {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(param);
+}
+
+const userId = getQueryParam("user_id");
+const noVa   = getQueryParam("no_va");
 
 if (!userId || !noVa) {
-  loading.style.display = "none";
-  errorDiv.innerText = "User ID atau No VA tidak ditemukan.";
+  document.getElementById("content").innerHTML =
+    "<div class='error'>Parameter tidak lengkap.</div>";
 } else {
 
-  fetch("ISI_URL_WEBAPP_ANDA_DISINI"
-    + "?user_id=" + encodeURIComponent(userId)
-    + "&no_va=" + encodeURIComponent(noVa))
+  fetch(`${URL_WEBAPP}?user_id=${encodeURIComponent(userId)}&no_va=${encodeURIComponent(noVa)}`)
+    .then(res => res.json())
+    .then(data => {
 
-  .then(res => res.json())
-  .then(res => {
+      if (data.status !== "success") {
+        document.getElementById("content").innerHTML =
+          `<div class='error'>${data.message}</div>`;
+        return;
+      }
 
-    loading.style.display = "none";
-
-    if (res.status !== "success") {
-      errorDiv.innerText = res.message;
-      return;
-    }
-
-    // HEADER
-    document.getElementById("nama_kepala").innerText = res.nama_kepala;
-    document.getElementById("no_va").innerText = res.no_va;
-    document.getElementById("catatan").innerText = res.catatan;
-
-    document.getElementById("total_tabungan").innerText =
-      "Rp " + Number(res.total_tabungan).toLocaleString("id-ID");
-
-    // ANGGOTA
-    const anggotaList = document.getElementById("anggota_list");
-    anggotaList.innerHTML = "";
-
-    if (res.anggota.length === 0) {
-      anggotaList.innerHTML = "<li>Tidak ada anggota</li>";
-    } else {
-      res.anggota.forEach(a => {
-        anggotaList.innerHTML +=
-          "<li>" + a.nama + " (" + a.jk + ")</li>";
+      let anggotaHTML = "";
+      data.anggota.forEach(a => {
+        anggotaHTML += `<li>${a.nama} (${a.jk})</li>`;
       });
-    }
 
-    // TRANSAKSI
-    const table = document.getElementById("transaksi_table");
-    table.innerHTML = "";
-
-    if (res.transaksi.length === 0) {
-      table.innerHTML =
-        "<tr><td colspan='3'>Belum ada transaksi</td></tr>";
-    } else {
-      res.transaksi.forEach(t => {
-        table.innerHTML += `
+      let transaksiHTML = "";
+      data.transaksi.forEach(t => {
+        transaksiHTML += `
           <tr>
             <td>${t.tanggal}</td>
-            <td>Rp ${Number(t.nominal).toLocaleString("id-ID")}</td>
-            <td>Rp ${Number(t.saldo).toLocaleString("id-ID")}</td>
+            <td>${formatRupiah(t.nominal)}</td>
+            <td>${formatRupiah(t.saldo)}</td>
           </tr>
         `;
       });
-    }
 
-    content.style.display = "block";
+      document.getElementById("content").innerHTML = `
+        <div class="card">
+          <strong>Nama Kepala:</strong> ${data.nama_kepala}<br>
+          <strong>No VA:</strong> ${data.no_va}<br>
+          <strong>Total Tabungan:</strong> ${formatRupiah(data.total_tabungan)}<br>
+          <strong>Catatan:</strong> ${data.catatan || "-"}
+        </div>
 
-  })
-  .catch(err => {
-    loading.style.display = "none";
-    errorDiv.innerText = "Gagal mengambil data.";
-    console.error(err);
-  });
+        <div class="card">
+          <strong>Anggota:</strong>
+          <ul>${anggotaHTML}</ul>
+        </div>
+
+        <div class="card">
+          <strong>Riwayat Transaksi:</strong>
+          <table>
+            <thead>
+              <tr>
+                <th>Tanggal</th>
+                <th>Nominal</th>
+                <th>Saldo</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${transaksiHTML}
+            </tbody>
+          </table>
+        </div>
+      `;
+    })
+    .catch(err => {
+      document.getElementById("content").innerHTML =
+        "<div class='error'>Gagal mengambil data.</div>";
+      console.error(err);
+    });
 }
 </script>
 
