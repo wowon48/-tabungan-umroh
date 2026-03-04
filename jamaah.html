@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Mutasi Tabungan</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+
+  <div id="loading">Memuat data...</div>
+
+  <div id="content" style="display:none;">
+
+    <div class="card header-card">
+      <h2 id="nama_kepala"></h2>
+      <p>No VA: <span id="no_va"></span></p>
+      <p>Keterangan: <span id="catatan"></span></p>
+    </div>
+
+    <div class="card total-card">
+      <h3>Total Tabungan</h3>
+      <h1 id="total_tabungan"></h1>
+    </div>
+
+    <div class="card">
+      <h3>Anggota Jamaah</h3>
+      <ul id="anggota_list"></ul>
+    </div>
+
+    <div class="card">
+      <h3>Mutasi Transaksi</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Tanggal</th>
+            <th>Nominal</th>
+            <th>Saldo</th>
+          </tr>
+        </thead>
+        <tbody id="transaksi_table"></tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <div id="error" class="error"></div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
