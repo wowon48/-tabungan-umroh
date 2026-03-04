@@ -2,41 +2,76 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Mutasi Tabungan</title>
+  <title>Tabungan Umroh Elhakim</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="container">
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo">
+      <img src="logo.png" alt="Elhakim">
+    </div>
+    <div class="title">
+      <h1>TABUNGAN UMROH</h1>
+      <h2>ELHAKIM</h2>
+    </div>
+  </div>
 
-  <div id="loading">Memuat data...</div>
+  <!-- SUMMARY BOX -->
+  <div class="summary">
 
-  <div id="content" style="display:none;">
-
-    <div class="card header-card">
-      <h2 id="nama_kepala"></h2>
-      <p>No VA: <span id="no_va"></span></p>
-      <p>Keterangan: <span id="catatan"></span></p>
+    <div class="card status">
+      <h3>Status Akun</h3>
+      <p class="success">✔ SUKSES</p>
     </div>
 
-    <div class="card total-card">
+    <div class="card">
       <h3>Total Tabungan</h3>
-      <h1 id="total_tabungan"></h1>
+      <p id="total_tabungan" class="total">Rp 0</p>
     </div>
 
     <div class="card">
-      <h3>Anggota Jamaah</h3>
-      <ul id="anggota_list"></ul>
+      <h3>No. Virtual Account</h3>
+      <p id="no_va"></p>
     </div>
 
-    <div class="card">
-      <h3>Mutasi Transaksi</h3>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- LEFT -->
+    <div class="card detail">
+      <h3>Detail Akun Keluarga</h3>
+
+      <div class="box">
+        <strong>Kepala Keluarga:</strong>
+        <p id="nama_kepala"></p>
+      </div>
+
+      <div class="box">
+        <strong>Catatan:</strong>
+        <p id="catatan"></p>
+      </div>
+
+      <div class="box">
+        <strong>Daftar Anggota</strong>
+        <ul id="anggota_list"></ul>
+      </div>
+
+    </div>
+
+    <!-- RIGHT -->
+    <div class="card transaksi">
+      <h3>Riwayat Transaksi</h3>
+
       <table>
         <thead>
           <tr>
             <th>Tanggal</th>
-            <th>Nominal</th>
-            <th>Saldo</th>
+            <th>Nominal (Rp)</th>
+            <th>Saldo (Rp)</th>
           </tr>
         </thead>
         <tbody id="transaksi_table"></tbody>
@@ -44,10 +79,6 @@
     </div>
 
   </div>
-
-  <div id="error" class="error"></div>
-
-</div>
 
 <script src="script.js"></script>
 </body>
