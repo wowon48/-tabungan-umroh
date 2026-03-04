@@ -1,52 +1,97 @@
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxaIWRX8I7J1hWx3aSfmWMXEObSww8COhwa_W2bWz_xKIolS6zKVfawuSpST5376A2L/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyZhfz0tKNcgvzS8LlfwfR-TauAfF8IN5ayTELfJ7Wh4eTFz355Rr3rUxQrXyL-isw9/exec";
 
-const params = new URLSearchParams(window.location.search);
-const token = params.get("token");
+function formatRupiah(angka) {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR"
+  }).format(angka || 0);
+}
 
-if (!token) {
-  document.getElementById("loading").innerText = "Token tidak ditemukan";
-} else {
+function getTokenFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("token");
+}
 
-  const url = WEBAPP_URL + "?token=" + encodeURIComponent(token);
+async function loadData() {
+  const token = getTokenFromURL();
 
-  fetch(url)
-    .then(res => res.text())
-    .then(text => {
+  if (!token) {
+    showError("Token tidak ditemukan.");
+    return;
+  }
 
-      const data = JSON.parse(text);
+  try {
+    const response = await fetch(`${API_URL}?token=${token}`, {
+      method: "GET",
+      mode: "cors"
+    });
 
-      if (!data || data.status !== "success") {
-        document.getElementById("loading").innerText = "Data tidak ditemukan";
-        return;
-      }
+    if (!response.ok) {
+      showError("Gagal mengambil data.");
+      return;
+    }
 
-      document.getElementById("loading").classList.add("hidden");
-      document.getElementById("content").classList.remove("hidden");
+    const data = await response.json();
 
-      document.getElementById("nama").innerText = data.nama_kepala;
-      document.getElementById("va").innerText = "No VA: " + data.no_va;
-      document.getElementById("total").innerText =
-        "Rp " + Number(data.total_tabungan).toLocaleString("id-ID");
+    if (!data || data.status !== "success") {
+      showError("Token tidak valid.");
+      return;
+    }
 
-      const tbody = document.getElementById("transaksiBody");
-      tbody.innerHTML = "";
+    // Sembunyikan loading, tampilkan konten
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("content").style.display = "block";
 
-      data.transaksi.forEach(trx => {
+    // Isi data utama
+    document.getElementById("nama_kepala").innerText = data.nama_kepala || "-";
+    document.getElementById("no_va").innerText = data.no_va || "-";
+    document.getElementById("catatan").innerText = data.catatan || "-";
+    document.getElementById("total_tabungan").innerText =
+      formatRupiah(data.total_tabungan);
 
+    // ======================
+    // ANGGOTA
+    // ======================
+    const anggotaList = document.getElementById("anggota_list");
+    anggotaList.innerHTML = "";
+
+    if (Array.isArray(data.anggota)) {
+      data.anggota.forEach(a => {
+        const li = document.createElement("li");
+        li.innerText = `${a.nama} (${a.jk})`;
+        anggotaList.appendChild(li);
+      });
+    }
+
+    // ======================
+    // TRANSAKSI
+    // ======================
+    const transaksiTable = document.getElementById("transaksi_table");
+    transaksiTable.innerHTML = "";
+
+    if (Array.isArray(data.transaksi)) {
+      data.transaksi.forEach(t => {
         const row = `
           <tr>
-            <td>${new Date(trx.tanggal).toLocaleDateString("id-ID")}</td>
-            <td>Rp ${Number(trx.nominal).toLocaleString("id-ID")}</td>
-            <td>Rp ${Number(trx.saldo).toLocaleString("id-ID")}</td>
+            <td>${new Date(t.tanggal).toLocaleDateString("id-ID")}</td>
+            <td>${formatRupiah(t.nominal)}</td>
+            <td>${formatRupiah(t.saldo)}</td>
           </tr>
         `;
-
-        tbody.innerHTML += row;
+        transaksiTable.innerHTML += row;
       });
+    }
 
-    })
-    .catch(err => {
-      document.getElementById("loading").innerText = "Gagal koneksi ke server";
-      console.error(err);
-    });
+  } catch (err) {
+    console.error(err);
+    showError("Terjadi kesalahan koneksi.");
+  }
 }
+
+function showError(msg) {
+  document.getElementById("loading").style.display = "none";
+  document.getElementById("content").style.display = "none";
+  document.getElementById("error").innerText = msg;
+}
+
+loadData();
