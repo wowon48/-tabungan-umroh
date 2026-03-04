@@ -1,5 +1,5 @@
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', sans-serif;
   background: #f4f6f9;
   margin: 0;
   padding: 20px;
@@ -7,25 +7,23 @@ body {
 
 .header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 30px;
-}
-
-.logo img {
-  height: 60px;
 }
 
 .title {
   text-align: right;
-  color: #c40000;
 }
 
 .title h1 {
+  color: #c40000;
   margin: 0;
+  font-size: 28px;
 }
 
 .title h2 {
+  color: #c40000;
   margin: 0;
   font-weight: bold;
 }
@@ -39,21 +37,28 @@ body {
 .card {
   background: white;
   padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
   flex: 1;
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
 }
 
 .status .success {
-  color: green;
+  color: #16a34a;
   font-weight: bold;
   font-size: 18px;
 }
 
 .total {
-  color: green;
-  font-size: 24px;
+  font-size: 28px;
   font-weight: bold;
+  background: linear-gradient(90deg, #16a34a, #22c55e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .content {
@@ -61,19 +66,14 @@ body {
   gap: 20px;
 }
 
-.detail {
-  flex: 1;
-}
-
-.transaksi {
-  flex: 2;
-}
+.detail { flex: 1; }
+.transaksi { flex: 2; }
 
 .box {
   background: #f1f3f5;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 10px;
 }
 
 table {
@@ -82,17 +82,33 @@ table {
 }
 
 table th {
-  background: #eee;
-  padding: 10px;
+  background: #f3f4f6;
+  padding: 12px;
   text-align: left;
 }
 
 table td {
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
+  padding: 12px;
+  border-bottom: 1px solid #eee;
 }
 
-tr td:nth-child(2) {
-  color: green;
+table tr:hover {
+  background: #f9fafb;
+}
+
+td:nth-child(2) {
+  color: #16a34a;
   font-weight: bold;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .summary,
+  .content {
+    flex-direction: column;
+  }
+
+  .title {
+    text-align: left;
+  }
 }
