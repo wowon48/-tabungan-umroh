@@ -7,27 +7,45 @@
 </head>
 <body>
 
-  <div class="container center">
-    
-    <img src="logo.png" class="logo">
+<div class="container center">
 
-    <h1>TABUNGAN UMROH<br>EL-HAKIM</h1>
+  <img src="logo.png" class="logo">
 
-    <div class="card login-card">
-      <h3>Cek Status Tabungan</h3>
+  <h1>TABUNGAN UMROH<br>EL-HAKIM</h1>
 
-      <input type="text" id="userId" placeholder="Masukkan User ID">
-      <input type="text" id="noVA" placeholder="Masukkan No Virtual Account">
+  <div class="card login-card">
+    <h3>Cek Status Tabungan</h3>
 
-      <button id="btnLogin">Cek Sekarang</button>
+    <input type="text" id="userId" placeholder="Masukkan User ID">
+    <input type="text" id="noVA" placeholder="Masukkan No Virtual Account">
 
-      <p id="errorMsg" class="error"></p>
-    </div>
+    <button onclick="login()">Cek Sekarang</button>
 
-    <p class="footer">© 2026 El-Hakim Umroh Haji</p>
-
+    <p id="errorMsg" class="error"></p>
   </div>
 
-  <script src="script.js"></script>
+  <p class="footer">© 2026 El-Hakim Umroh Haji</p>
+
+</div>
+
+<script>
+function login() {
+  const userId = document.getElementById("userId").value.trim();
+  const noVA = document.getElementById("noVA").value.trim();
+  const errorMsg = document.getElementById("errorMsg");
+
+  errorMsg.innerText = "";
+
+  if (!userId || !noVA) {
+    errorMsg.innerText = "User ID dan No Virtual Account wajib diisi.";
+    return;
+  }
+
+  window.location.href =
+    "jamaah.html?user_id=" + encodeURIComponent(userId) +
+    "&no_va=" + encodeURIComponent(noVA);
+}
+</script>
+
 </body>
 </html>
