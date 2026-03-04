@@ -8,17 +8,24 @@
 <body>
 
   <div class="container center">
+    
     <img src="logo.png" class="logo">
 
-    <h1>TABUNGAN UMROH<br>ELHAKIM</h1>
+    <h1>TABUNGAN UMROH<br>EL-HAKIM</h1>
 
     <div class="card login-card">
       <h3>Cek Status Tabungan</h3>
-      <input type="text" id="noVA" placeholder="Masukkan No. Virtual Account">
+
+      <input type="text" id="userId" placeholder="Masukkan User ID">
+      <input type="text" id="noVA" placeholder="Masukkan No Virtual Account">
+
       <button onclick="cekData()">Cek Sekarang</button>
+
+      <p id="errorMsg" class="error"></p>
     </div>
 
-    <p class="footer">© 2026 El-Hakim Umroh Haji</p>
+    <p class="footer">Â© 2026 El-Hakim Umroh Haji</p>
+
   </div>
 
   <script src="script.js"></script>
