@@ -1,4 +1,4 @@
-const API_URL = "MASUKKAN_URL_APPS_SCRIPT_DISINI";
+const API_URL = "https://script.google.com/macros/s/AKfycbyZhfz0tKNcgvzS8LlfwfR-TauAfF8IN5ayTELfJ7Wh4eTFz355Rr3rUxQrXyL-isw9/exec";
 
 function cekData() {
   const noVA = document.getElementById("noVA").value.trim();
@@ -59,4 +59,5 @@ function loadData() {
       alert("Data tidak ditemukan");
       console.error(error);
     });
+
 }
