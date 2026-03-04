@@ -1,4 +1,4 @@
-const API_URL = https://script.google.com/macros/s/AKfycbxaIWRX8I7J1hWx3aSfmWMXEObSww8COhwa_W2bWz_xKIolS6zKVfawuSpST5376A2L/exec;
+const API_URL = https://script.google.com/macros/s/AKfycbxxxxx/exec;
 
 function formatRupiah(angka) {
   return new Intl.NumberFormat(id-ID, {
@@ -67,5 +67,6 @@ function showError(msg) {
   document.getElementById(loading).style.display = none;
   document.getElementById(error).innerText = msg;
 }
+
 
 loadData();
