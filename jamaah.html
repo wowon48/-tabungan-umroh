@@ -2,93 +2,54 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Tabungan Umroh Elhakim</title>
+  <title>Detail Tabungan Jamaah</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- LOADING -->
-  <div id="loading" style="text-align:center; padding:40px;">
-    <h3>Memuat data...</h3>
-  </div>
+  <div class="container">
 
-  <!-- ERROR -->
-  <div id="error" style="text-align:center; color:red; font-weight:bold;"></div>
-
-  <!-- CONTENT -->
-  <div id="content" style="display:none;">
-
-    <!-- HEADER -->
     <div class="header">
-      <div class="logo">
-        <img src="logo.png" height="60">
-      </div>
-      <div class="title">
-        <h1>TABUNGAN UMROH</h1>
-        <h2>ELHAKIM</h2>
-      </div>
+      <img src="logo.png" class="logo">
+      <h2>Detail Tabungan Jamaah</h2>
     </div>
 
-    <!-- SUMMARY -->
-    <div class="summary">
+    <div id="loading" class="loading">
+      Memuat data...
+    </div>
 
-      <div class="card status">
-        <h3>Status Akun</h3>
-        <p class="success">✔ SUKSES</p>
+    <div id="content" class="content hidden">
+
+      <div class="card">
+        <h3 id="nama">Nama Jamaah</h3>
+        <p id="va"></p>
+      </div>
+
+      <div class="card total-card">
+        <p>Total Tabungan</p>
+        <h1 id="total">Rp 0</h1>
       </div>
 
       <div class="card">
-        <h3>Total Tabungan</h3>
-        <p id="total_tabungan" class="total">Rp 0</p>
-      </div>
-
-      <div class="card">
-        <h3>No. Virtual Account</h3>
-        <p id="no_va"></p>
-      </div>
-
-    </div>
-
-    <!-- CONTENT DETAIL -->
-    <div class="content">
-
-      <div class="card detail">
-        <h3>Detail Akun Keluarga</h3>
-
-        <div class="box">
-          <strong>Kepala Keluarga:</strong>
-          <p id="nama_kepala"></p>
-        </div>
-
-        <div class="box">
-          <strong>Catatan:</strong>
-          <p id="catatan"></p>
-        </div>
-
-        <div class="box">
-          <strong>Daftar Anggota</strong>
-          <ul id="anggota_list"></ul>
-        </div>
-      </div>
-
-      <div class="card transaksi">
         <h3>Riwayat Transaksi</h3>
-
         <table>
           <thead>
             <tr>
               <th>Tanggal</th>
-              <th>Nominal (Rp)</th>
-              <th>Saldo (Rp)</th>
+              <th>Nominal</th>
+              <th>Saldo</th>
             </tr>
           </thead>
-          <tbody id="transaksi_table"></tbody>
+          <tbody id="transaksiBody">
+          </tbody>
         </table>
       </div>
 
     </div>
+
   </div>
 
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
