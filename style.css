@@ -1,0 +1,102 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f4f6f9;
+  margin: 0;
+  color: #333;
+}
+
+.container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 20px;
+}
+
+.center {
+  text-align: center;
+  margin-top: 80px;
+}
+
+.logo {
+  width: 180px;
+  margin-bottom: 20px;
+}
+
+.logo-small {
+  width: 120px;
+}
+
+h1, h2 {
+  color: #b30000;
+}
+
+.card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  margin-bottom: 20px;
+}
+
+.login-card input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+button {
+  background: #b30000;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  width: 100%;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:hover {
+  background: #800000;
+}
+
+.grid-top {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.grid-bottom {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 20px;
+}
+
+.success {
+  color: green;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.total {
+  color: green;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th, table td {
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.footer {
+  margin-top: 40px;
+  font-size: 12px;
+  color: #777;
+}
