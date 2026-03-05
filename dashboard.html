@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Tabungan Jamaah</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+<header>
+
+<img src="img/logo.png">
+
+<h2>TABUNGAN UMROH ELHAKIM</h2>
+
+</header>
+
+
+<div class="cards">
+
+<div class="card">
+<h3>Status</h3>
+<p class="status">AKTIF</p>
+</div>
+
+<div class="card">
+<h3>Total Tabungan</h3>
+<p id="saldo"></p>
+</div>
+
+<div class="card">
+<h3>No VA</h3>
+<p id="va"></p>
+</div>
+
+</div>
+
+
+<div class="progress-box">
+
+<h3>Progress Tabungan</h3>
+
+<div class="progress-bar">
+
+<div id="progress"></div>
+
+</div>
+
+</div>
+
+
+<div class="container">
+
+<div class="left">
+
+<h3>Detail Akun</h3>
+
+<p><b>Kepala Keluarga</b></p>
+<p id="nama"></p>
+
+<p><b>Catatan</b></p>
+<p id="catatan"></p>
+
+<h4>Anggota</h4>
+
+<ul id="anggota"></ul>
+
+<button onclick="downloadPDF()">Download PDF</button>
+
+</div>
+
+
+<div class="right">
+
+<h3>Riwayat Transaksi</h3>
+
+<table>
+
+<thead>
+
+<tr>
+<th>Tanggal</th>
+<th>Nominal</th>
+<th>Saldo</th>
+</tr>
+
+</thead>
+
+<tbody id="transaksi"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+<script src="lib/jspdf.umd.min.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/pdf.js"></script>
+
+</body>
+</html>
