@@ -135,4 +135,65 @@ flex-direction:column;
 
 }
 
+/* LOGIN PAGE */
+
+.login-page{
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+background:#f4f6f8;
+}
+
+.login-box{
+background:white;
+padding:30px;
+border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
+text-align:center;
+width:300px;
+}
+
+/* LOGO */
+.logo{
+max-width:180px;
+width:100%;
+height:auto;
+margin-bottom:10px;
+}
+
+/* SUBTITLE */
+.subtitle{
+font-size:12px;
+color:#888;
+margin-bottom:15px;
+}
+
+/* INPUT */
+input{
+width:100%;
+padding:10px;
+margin:8px 0;
+border-radius:5px;
+border:1px solid #ccc;
+}
+
+/* BUTTON */
+button{
+width:100%;
+padding:10px;
+background:#7a1c1c;
+color:white;
+border:none;
+border-radius:5px;
+font-weight:bold;
+cursor:pointer;
+}
+
+/* ERROR */
+#error{
+color:red;
+font-size:12px;
+margin-top:10px;
+}
 }
