@@ -23,6 +23,9 @@ document.getElementById("catatan").innerText = data.catatan;
 document.getElementById("saldo").innerText =
 "Rp "+data.total_tabungan.toLocaleString("id-ID");
 
+document.getElementById("target-text").innerText =
+"Target: Rp " + target.toLocaleString("id-ID");
+
 
 // progress
 
