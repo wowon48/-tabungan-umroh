@@ -26,12 +26,22 @@ document.getElementById("saldo").innerText =
 
 // progress
 
-let target = 30000000;
+let total = data.total_tabungan;
+let target = data.target_tabungan || 1;
 
-let persen = (data.total_tabungan/target)*100;
+// hitung persen
+let persen = (total / target) * 100;
 
+// batasi max 100%
+if(persen > 100) persen = 100;
+
+// set progress bar
 document.getElementById("progress").style.width =
-persen+"%";
+persen + "%";
+
+// tampilkan text
+document.getElementById("progress-text").innerText =
+Math.round(persen) + "% dari target";
 
 
 // anggota
