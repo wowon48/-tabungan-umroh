@@ -4,7 +4,7 @@ const user_id = params.get("user_id");
 const no_va = params.get("no_va");
 
 const api =
-"https://script.google.com/macros/s/AKfycbzk052mEIwZUHZLcjYcMmHqOPWcARXLS-XUE1hjUYhWP0_P61F6PKIn-HYG21fry0AD/exec"
+"https://script.google.com/macros/s/AKfycbwFTFh5xcdSrqnylyIP0OdD7QRNwhYxno9WDJjd5oUKVjEdeRsPgZTeUacKuj1Utg/exec"
 +"?user_id="+user_id+"&no_va="+no_va;
 
 fetch(api)
