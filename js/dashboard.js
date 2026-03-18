@@ -47,6 +47,10 @@ let persen = (total / target) * 100;
 // batasi max 100%
 if(persen > 100) persen = 100;
 
+if(persen >= 100){
+document.querySelector(".status").innerText = "LUNAS";
+document.querySelector(".status").style.color = "green";
+
 // set progress bar
 document.getElementById("progress").style.width =
 persen + "%";
