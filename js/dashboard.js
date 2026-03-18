@@ -32,6 +32,15 @@ document.getElementById("target-text").innerText =
 let total = data.total_tabungan;
 let target = data.target_tabungan || 1;
 
+let bar = document.getElementById("progress");
+
+if(persen < 50){
+    bar.style.background = "red";
+}else if(persen < 100){
+    bar.style.background = "orange";
+}else{
+    bar.style.background = "green";
+
 // hitung persen
 let persen = (total / target) * 100;
 
