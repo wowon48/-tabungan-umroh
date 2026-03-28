@@ -1,96 +1,161 @@
 function downloadPDF(){
 
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
+const { jsPDF } = window.jspdf;
+let doc = new jsPDF();
 
-  // =========================
-  // AMBIL DATA DARI HALAMAN
-  // =========================
-  let nama = document.getElementById("nama").innerText;
-  let saldo = document.getElementById("saldo").innerText;
+// =====================
+// DATA
+// =====================
+let nama = document.getElementById("nama").innerText;
+let saldo = document.getElementById("saldo").innerText;
+let va = document.getElementById("va").innerText;
+let catatan = document.getElementById("catatan").innerText;
+let progressText = document.getElementById("progress-text").innerText;
+let targetText = document.getElementById("target-text").innerText;
 
-  // =========================
-  // TAMBAHKAN LOGO
-  // =========================
-  let logo = new Image();
-  logo.src = "img/logo.png";
+// =====================
+// QR DATA (UNIK)
+// =====================
+let qrData = `ELHAKIM|${nama}|${va}|${saldo}`;
 
-  logo.onload = function(){
 
-    doc.addImage(logo, "PNG", 20, 10, 30, 15);
+// =====================
+// LOAD LOGO
+// =====================
+let logo = new Image();
+logo.src = "img/logo.png";
 
-    // =========================
-    // HEADER TRAVEL
-    // =========================
-    doc.setFontSize(14);
-    doc.text("ELHAKIM TRAVEL UMROH HAJI", 60, 18);
+logo.onload = function(){
 
-    doc.setFontSize(10);
-    doc.text("Jl. Ki Mangun Sarkoro A7 Villa Satwika Tulungagung", 60, 24);
+// HEADER LOGO
+doc.addImage(logo, "PNG", 15, 10, 25, 25);
 
-    // GARIS PEMBATAS
-    doc.line(20, 30, 190, 30);
+// =====================
+// HEADER TEXT
+// =====================
+doc.setFontSize(14);
+doc.setFont(undefined, "bold");
+doc.text("ELHAKIM TRAVEL UMROH HAJI", 45, 18);
 
-    // =========================
-    // JUDUL LAPORAN
-    // =========================
-    doc.setFontSize(13);
-    doc.text("LAPORAN TABUNGAN UMROH", 65, 40);
+doc.setFontSize(9);
+doc.setFont(undefined, "normal");
+doc.text("Jl. Ki Mangun Sarkoro A7 Villa Satwika Tulungagung", 45, 24);
 
-    // =========================
-    // DATA JAMAAH
-    // =========================
-    doc.setFontSize(11);
-    doc.text("Nama Jamaah : " + nama, 20, 55);
-    doc.text("Total Tabungan : " + saldo, 20, 63);
+doc.line(15, 30, 195, 30);
 
-    // =========================
-    // HEADER TABEL
-    // =========================
-    doc.setFontSize(11);
-    doc.text("Tanggal", 20, 80);
-    doc.text("Nominal", 80, 80);
-    doc.text("Saldo", 140, 80);
 
-    doc.line(20, 83, 190, 83);
+// =====================
+// WATERMARK
+// =====================
+doc.addImage(logo, "PNG", 40, 90, 120, 120, '', 'FAST');
 
-    // =========================
-    // AMBIL DATA TABEL HTML
-    // =========================
-    let rows = document.querySelectorAll("#transaksi tr");
 
-    let y = 90;
+// =====================
+// QR CODE GENERATE
+// =====================
+QRCode.toDataURL(qrData, function (err, url) {
 
-    rows.forEach(row => {
+doc.addImage(url, "PNG", 160, 35, 30, 30);
 
-      let cols = row.querySelectorAll("td");
+// lanjut isi
+generateContent();
 
-      if(cols.length >= 3){
-        doc.text(cols[0].innerText, 20, y);
-        doc.text(cols[1].innerText, 80, y);
-        doc.text(cols[2].innerText, 140, y);
+});
 
-        y += 8;
-      }
+};
 
-      // page break otomatis
-      if(y > 270){
-        doc.addPage();
-        y = 20;
-      }
-    });
 
-    // =========================
-    // FOOTER
-    // =========================
-    let today = new Date().toLocaleDateString();
+// =====================
+// FUNCTION ISI PDF
+// =====================
+function generateContent(){
 
-    doc.setFontSize(9);
-    doc.text("Dicetak pada : " + today, 20, 290);
+// JUDUL
+doc.setFontSize(12);
+doc.setFont(undefined, "bold");
+doc.text("LAPORAN TABUNGAN UMROH", 105, 38, { align: "center" });
 
-    // =========================
-    // SIMPAN PDF
-    // =========================
-    doc.save("laporan_tabungan_umroh.pdf");
-  }
+
+// =====================
+// DATA AKUN
+// =====================
+doc.setFontSize(10);
+
+doc.text("Nama Jamaah : " + nama, 15, 50);
+doc.text("No VA        : " + va, 15, 56);
+doc.text("Catatan      : " + catatan, 15, 62);
+
+doc.text("Total Tabungan : " + saldo, 120, 50);
+doc.text(targetText, 120, 56);
+doc.text("Progress : " + progressText, 120, 62);
+
+doc.line(15, 68, 195, 68);
+
+
+// =====================
+// TABEL
+// =====================
+let startY = 75;
+
+doc.setFont(undefined, "bold");
+doc.text("Tanggal", 15, startY);
+doc.text("Nominal", 80, startY);
+doc.text("Saldo", 150, startY);
+
+doc.line(15, startY + 2, 195, startY + 2);
+
+let rows = document.querySelectorAll("#transaksi tr");
+
+doc.setFont(undefined, "normal");
+
+let y = startY + 10;
+
+rows.forEach((row) => {
+
+let cols = row.querySelectorAll("td");
+
+if(cols.length >= 3){
+
+doc.text(cols[0].innerText, 15, y);
+doc.text(cols[1].innerText, 80, y);
+doc.text(cols[2].innerText, 150, y);
+
+y += 7;
+
+if(y > 280){
+
+doc.addPage();
+
+// watermark halaman baru
+doc.addImage(logo, "PNG", 40, 90, 120, 120, '', 'FAST');
+
+// QR ulang di halaman baru
+QRCode.toDataURL(qrData, function (err, url) {
+doc.addImage(url, "PNG", 160, 15, 30, 30);
+});
+
+y = 30;
+}
+
+}
+
+});
+
+
+// =====================
+// FOOTER
+// =====================
+let tanggalCetak = new Date().toLocaleDateString("id-ID");
+
+doc.setFontSize(8);
+doc.text("Dicetak pada: " + tanggalCetak, 15, 290);
+
+
+// =====================
+// SAVE
+// =====================
+doc.save("laporan_tabungan_umroh.pdf");
+
+}
+
 }
