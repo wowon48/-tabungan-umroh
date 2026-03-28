@@ -14,44 +14,45 @@ let progressText = document.getElementById("progress-text").innerText;
 let targetText = document.getElementById("target-text").innerText;
 
 // =====================
-// QR DATA (UNIK)
+// QR
 // =====================
 let qrData = `ELHAKIM|${nama}|${va}|${saldo}`;
 
-
 // =====================
-// LOAD LOGO
+// LOGO
 // =====================
 let logo = new Image();
 logo.src = "img/logo.png";
 
 logo.onload = function(){
 
-// HEADER LOGO
-doc.addImage(logo, "PNG", 15, 10, 25, 25);
+// =====================
+// HEADER
+// =====================
+doc.addImage(logo, "PNG", 15, 10, 20, 20);
 
-// =====================
-// HEADER TEXT
-// =====================
-doc.setFontSize(14);
+doc.setFontSize(13);
 doc.setFont(undefined, "bold");
-doc.text("ELHAKIM TRAVEL UMROH HAJI", 45, 18);
+doc.text("ELHAKIM TRAVEL UMROH HAJI", 40, 17);
 
-doc.setFontSize(9);
+doc.setFontSize(8);
 doc.setFont(undefined, "normal");
-doc.text("Jl. Ki Mangun Sarkoro A7 Villa Satwika Tulungagung", 45, 24);
+doc.text("Jl. Ki Mangun Sarkoro Tulungagung", 40, 22);
 
 doc.line(15, 30, 195, 30);
 
 
 // =====================
-// WATERMARK
+// WATERMARK (SUPER HALUS)
 // =====================
-doc.addImage(logo, "PNG", 40, 90, 120, 120, '', 'FAST');
+doc.setTextColor(230);
+doc.setFontSize(50);
+doc.text("ELHAKIM", 55, 160, { angle: 45 });
+doc.setTextColor(0);
 
 
 // =====================
-// QR CODE GENERATE
+// QR CODE
 // =====================
 QRCode.toDataURL(qrData, function (err, url) {
 
@@ -66,49 +67,50 @@ generateContent();
 
 
 // =====================
-// FUNCTION ISI PDF
+// ISI PDF
 // =====================
 function generateContent(){
 
 // JUDUL
 doc.setFontSize(12);
 doc.setFont(undefined, "bold");
-doc.text("LAPORAN TABUNGAN UMROH", 105, 38, { align: "center" });
+doc.text("LAPORAN TABUNGAN UMROH", 105, 40, { align: "center" });
 
 
 // =====================
 // DATA AKUN
 // =====================
 doc.setFontSize(10);
+doc.setFont(undefined, "normal");
 
-doc.text("Nama Jamaah : " + nama, 15, 50);
-doc.text("No VA        : " + va, 15, 56);
-doc.text("Catatan      : " + catatan, 15, 62);
+doc.text("Nama Jamaah : " + nama, 15, 55);
+doc.text("No VA        : " + va, 15, 62);
+doc.text("Catatan      : " + catatan, 15, 69);
 
-doc.text("Total Tabungan : " + saldo, 120, 50);
-doc.text(targetText, 120, 56);
-doc.text("Progress : " + progressText, 120, 62);
+doc.text("Total Tabungan : " + saldo, 120, 55);
+doc.text(targetText, 120, 62);
+doc.text("Progress : " + progressText, 120, 69);
 
-doc.line(15, 68, 195, 68);
+// garis
+doc.line(15, 75, 195, 75);
 
 
 // =====================
 // TABEL
 // =====================
-let startY = 75;
+let y = 85;
 
 doc.setFont(undefined, "bold");
-doc.text("Tanggal", 15, startY);
-doc.text("Nominal", 80, startY);
-doc.text("Saldo", 150, startY);
+doc.text("Tanggal", 15, y);
+doc.text("Nominal", 80, y);
+doc.text("Saldo", 150, y);
 
-doc.line(15, startY + 2, 195, startY + 2);
-
-let rows = document.querySelectorAll("#transaksi tr");
+doc.line(15, y+2, 195, y+2);
 
 doc.setFont(undefined, "normal");
+y += 10;
 
-let y = startY + 10;
+let rows = document.querySelectorAll("#transaksi tr");
 
 rows.forEach((row) => {
 
@@ -122,19 +124,18 @@ doc.text(cols[2].innerText, 150, y);
 
 y += 7;
 
+// PAGE BREAK
 if(y > 280){
 
 doc.addPage();
 
-// watermark halaman baru
-doc.addImage(logo, "PNG", 40, 90, 120, 120, '', 'FAST');
+// watermark ulang (halus)
+doc.setTextColor(230);
+doc.setFontSize(50);
+doc.text("ELHAKIM", 55, 160, { angle: 45 });
+doc.setTextColor(0);
 
-// QR ulang di halaman baru
-QRCode.toDataURL(qrData, function (err, url) {
-doc.addImage(url, "PNG", 160, 15, 30, 30);
-});
-
-y = 30;
+y = 20;
 }
 
 }
@@ -145,15 +146,13 @@ y = 30;
 // =====================
 // FOOTER
 // =====================
-let tanggalCetak = new Date().toLocaleDateString("id-ID");
+let tgl = new Date().toLocaleDateString("id-ID");
 
 doc.setFontSize(8);
-doc.text("Dicetak pada: " + tanggalCetak, 15, 290);
+doc.text("Dicetak: " + tgl, 15, 290);
 
 
-// =====================
 // SAVE
-// =====================
 doc.save("laporan_tabungan_umroh.pdf");
 
 }
