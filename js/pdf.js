@@ -42,7 +42,7 @@ fetch("img/logo.png")
             // ======================
             // MASUKKAN KE PDF
             // ======================
-            doc.addImage(base64data, "PNG", 15, 10, fixWidth, fixHeight);
+            doc.addImage(base64data, "PNG");
 
             // ======================
             // TEXT
