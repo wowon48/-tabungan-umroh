@@ -21,7 +21,7 @@ fetch("img/logo.png")
         let base64data = reader.result;
 
         // baru masuk ke PDF
-        doc.addImage(base64data, "PNG", 15, 10, 30, 15);
+        doc.addImage(base64data, "PNG", 15, 10, 30);
 
         doc.text("LAPORAN TABUNGAN UMROH", 20, 40);
         doc.text("Nama: " + nama, 20, 50);
