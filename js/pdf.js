@@ -10,28 +10,25 @@ let saldo = document.getElementById("saldo").innerText;
 // ======================
 // LOAD IMAGE DENGAN FETCH
 // ======================
-fetch("img/logo.png")
-.then(res => res.blob())
-.then(blob => {
+let img = new Image();
+img.src = base64data;
 
-    let reader = new FileReader();
+img.onload = function(){
 
-    reader.onloadend = function() {
+    let imgWidth = img.width;
+    let imgHeight = img.height;
 
-        let base64data = reader.result;
+    // tentukan lebar fix
+    let fixWidth = 30;
 
-        // baru masuk ke PDF
-        doc.addImage(base64data, "PNG", 15, 10, 30);
+    // hitung tinggi otomatis (biar proporsional)
+    let fixHeight = (imgHeight / imgWidth) * fixWidth;
 
-        doc.text("LAPORAN TABUNGAN UMROH", 20, 40);
-        doc.text("Nama: " + nama, 20, 50);
-        doc.text("Saldo: " + saldo, 20, 60);
+    doc.addImage(base64data, "PNG", 15, 10, fixWidth, fixHeight);
 
-        doc.save("laporan.pdf");
-    };
+    doc.text("LAPORAN TABUNGAN UMROH", 20, 40);
+    doc.text("Nama: " + nama, 20, 50);
+    doc.text("Saldo: " + saldo, 20, 60);
 
-    reader.readAsDataURL(blob);
-
-});
-
-}
+    doc.save("laporan.pdf");
+};
