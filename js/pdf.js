@@ -1,3 +1,44 @@
+function downloadPDF(){
+
+const { jsPDF } = window.jspdf;
+let doc = new jsPDF("p", "mm", "a4");
+
+// =====================
+// DATA
+// =====================
+let nama = document.getElementById("nama").innerText;
+let saldo = document.getElementById("saldo").innerText;
+let va = document.getElementById("va").innerText;
+let catatan = document.getElementById("catatan").innerText;
+let progressText = document.getElementById("progress-text").innerText;
+let targetText = document.getElementById("target-text").innerText;
+
+let qrData = `ELHAKIM|${nama}|${va}|${saldo}`;
+
+// =====================
+// LOAD IMAGE
+// =====================
+let logo = new Image();
+let watermark = new Image();
+
+logo.src = "img/logo.png";
+watermark.src = "img/watermark.png";
+
+logo.onload = function(){
+
+QRCode.toDataURL(qrData, function (err, qrUrl) {
+
+renderPage(qrUrl);
+
+doc.save("laporan_tabungan_umroh.pdf");
+
+});
+
+};
+
+// =====================
+// RENDER PAGE
+// =====================
 function renderHeader(qrUrl){
 
 // WATERMARK
@@ -49,4 +90,70 @@ return 80; // start tabel halaman 1
 
 // halaman 2 dst
 return 45;
+}
+
+// =====================
+// TABEL
+// =====================
+let startY = 80;
+
+// HEADER TABLE
+doc.setFont("helvetica", "bold");
+doc.setFontSize(9);
+
+doc.text("Tanggal", 20, startY);
+doc.text("Nominal", 100, startY, { align: "right" });
+doc.text("Saldo", 190, startY, { align: "right" });
+
+doc.line(15, startY + 2, 195, startY + 2);
+
+doc.setFont("helvetica", "normal");
+
+let y = startY + 8;
+
+let rows = document.querySelectorAll("#transaksi tr");
+
+rows.forEach((row) => {
+
+let cols = row.querySelectorAll("td");
+
+if(cols.length >= 3){
+
+// FORMAT RAPI
+let tgl = cols[0].innerText;
+let nominal = cols[1].innerText;
+let saldoRow = cols[2].innerText;
+
+// DRAW
+doc.text(tgl, 20, y);
+doc.text(nominal, 100, y, { align: "right" });
+doc.text(saldoRow, 190, y, { align: "right" });
+
+y += 6;
+
+// PAGE BREAK
+if(y > 280){
+
+doc.addPage();
+
+// WATERMARK ULANG
+doc.addImage(watermark, "PNG", 35, 80, 140, 140);
+
+y = 20;
+
+}
+
+}
+
+});
+
+// =====================
+// FOOTER
+// =====================
+let tglCetak = new Date().toLocaleDateString("id-ID");
+
+doc.setFontSize(8);
+doc.text("Dicetak: " + tglCetak, 15, 290);
+
+}
 }
