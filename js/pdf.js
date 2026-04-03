@@ -3,14 +3,12 @@ function downloadPDF() {
 const { jsPDF } = window.jspdf;
 const doc = new jsPDF();
 
-// ======================
-// AMBIL DATA
-// ======================
+// data
 let nama = document.getElementById("nama").innerText;
 let saldo = document.getElementById("saldo").innerText;
 
 // ======================
-// LOAD LOGO (ANTI GAGAL)
+// LOAD IMAGE DENGAN FETCH
 // ======================
 fetch("img/logo.png")
 .then(res => res.blob())
@@ -22,116 +20,14 @@ fetch("img/logo.png")
 
         let base64data = reader.result;
 
-        // ======================
-        // BUAT IMAGE OBJECT (AMBIL RASIO)
-        // ======================
-        let img = new Image();
-        img.src = base64data;
+        // baru masuk ke PDF
+        doc.addImage(base64data, "PNG", 15, 10, 3, 10);
 
-        img.onload = function(){
+        doc.text("LAPORAN TABUNGAN UMROH", 20, 40);
+        doc.text("Nama: " + nama, 20, 50);
+        doc.text("Saldo: " + saldo, 20, 60);
 
-            let imgWidth = img.width;
-            let imgHeight = img.height;
-
-            // ukuran fix (ubah kalau mau)
-            let fixWidth = 25;
-
-            // tinggi auto biar proporsional
-            let fixHeight = (imgHeight / imgWidth) * fixWidth;
-
-            // ======================
-            // MASUKKAN KE PDF
-            // ======================
-function downloadPDF() {
-
-const { jsPDF } = window.jspdf;
-const doc = new jsPDF();
-
-// ======================
-// AMBIL DATA
-// ======================
-let nama = document.getElementById("nama").innerText;
-let saldo = document.getElementById("saldo").innerText;
-
-// ======================
-// LOAD LOGO (ANTI GAGAL)
-// ======================
-fetch("img/logo.png")
-.then(res => res.blob())
-.then(blob => {
-
-    let reader = new FileReader();
-
-    reader.onloadend = function() {
-
-        let base64data = reader.result;
-
-        // ======================
-        // BUAT IMAGE OBJECT (AMBIL RASIO)
-        // ======================
-        let img = new Image();
-        img.src = base64data;
-
-        img.onload = function(){
-
-            let imgWidth = img.width;
-            let imgHeight = img.height;
-
-            // ukuran fix (ubah kalau mau)
-            let fixWidth = 25;
-
-            // tinggi auto biar proporsional
-            let fixHeight = (imgHeight / imgWidth) * fixWidth;
-
-            // ======================
-            // MASUKKAN KE PDF
-            // ======================
-            doc.addImage(base64data, "PNG", fixWidth, fixHeight);
-
-            // ======================
-            // TEXT
-            // ======================
-            doc.setFont("helvetica", "bold");
-            doc.setFontSize(12);
-            doc.text("LAPORAN TABUNGAN UMROH", 20, 40);
-
-            doc.setFont("helvetica", "normal");
-            doc.setFontSize(10);
-            doc.text("Nama: " + nama, 20, 50);
-            doc.text("Saldo: " + saldo, 20, 60);
-
-            // ======================
-            // SAVE PDF
-            // ======================
-            doc.save("Laporan_Tabungan.pdf");
-        };
-
-    };
-
-    reader.readAsDataURL(blob);
-
-});
-
-}
-
-            // ======================
-            // TEXT
-            // ======================
-            doc.setFont("helvetica", "bold");
-            doc.setFontSize(12);
-            doc.text("LAPORAN TABUNGAN UMROH", 20, 40);
-
-            doc.setFont("helvetica", "normal");
-            doc.setFontSize(10);
-            doc.text("Nama: " + nama, 20, 50);
-            doc.text("Saldo: " + saldo, 20, 60);
-
-            // ======================
-            // SAVE PDF
-            // ======================
-            doc.save("Laporan_Tabungan.pdf");
-        };
-
+        doc.save("laporan.pdf");
     };
 
     reader.readAsDataURL(blob);
