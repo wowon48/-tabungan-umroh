@@ -1,10 +1,12 @@
-function downloadPDF(){
+async function downloadPDF() {
 
 const { jsPDF } = window.jspdf;
-let doc = new jsPDF();
+const doc = new jsPDF("p", "mm", "a4");
+
+let pageWidth = doc.internal.pageSize.getWidth();
 
 // =====================
-// DATA
+// DATA DARI HTML
 // =====================
 let nama = document.getElementById("nama").innerText;
 let saldo = document.getElementById("saldo").innerText;
@@ -14,148 +16,136 @@ let progressText = document.getElementById("progress-text").innerText;
 let targetText = document.getElementById("target-text").innerText;
 
 // =====================
-// QR DATA (UNIK)
-// =====================
-let qrData = `ELHAKIM|${nama}|${va}|${saldo}`;
-
-
-// =====================
-// LOAD LOGO
+// LOGO HEADER (RAPI)
 // =====================
 let logo = new Image();
 logo.src = "img/logo.png";
 
-logo.onload = function(){
+await new Promise(resolve => logo.onload = resolve);
 
-// HEADER LOGO
-doc.addImage(logo, "PNG", 50, 25, 25);
+// ukuran fix biar gak gepeng
+doc.addImage(logo, "PNG", 15, 10, 30, 15);
 
 // =====================
 // HEADER TEXT
 // =====================
-doc.setFontSize(14);
-doc.setFont(undefined, "bold");
-doc.text("ELHAKIM TRAVEL UMROH HAJI", 45, 18);
+doc.setFont("helvetica", "bold");
+doc.setFontSize(12);
+doc.text("ELHAKIM TRAVEL UMROH HAJI", 50, 15);
 
+doc.setFont("helvetica", "normal");
 doc.setFontSize(9);
-doc.setFont(undefined, "normal");
-doc.text("Jl. Ki Mangun Sarkoro A7 Villa Satwika Tulungagung", 45, 24);
+doc.text("Jl. Ki Mangun Sarkoro A7 Villa Satwika Tulungagung", 50, 20);
 
-doc.line(15, 30, 195, 30);
-
-
-// =====================
-// WATERMARK
-// =====================
-doc.addImage(logo, "PNG", 40, 90, 120, 120, '', 'FAST');
-
+// garis
+doc.line(15, 25, 195, 25);
 
 // =====================
-// QR CODE GENERATE
+// JUDUL
 // =====================
-QRCode.toDataURL(qrData, function (err, url) {
+doc.setFontSize(12);
+doc.setFont("helvetica", "bold");
+doc.text("LAPORAN TABUNGAN UMROH", pageWidth / 2, 32, { align: "center" });
 
-doc.addImage(url, "PNG", 160, 35, 30, 30);
+// =====================
+// DETAIL AKUN
+// =====================
+doc.setFontSize(9);
+doc.setFont("helvetica", "normal");
 
-// lanjut isi
-generateContent();
+doc.text("Nama Jamaah : " + nama, 15, 40);
+doc.text("No VA        : " + va, 15, 45);
+doc.text("Catatan      : " + catatan, 15, 50);
 
+doc.text("Total Tabungan : " + saldo, 120, 40);
+doc.text(targetText, 120, 45);
+doc.text("Progress : " + progressText, 120, 50);
+
+// =====================
+// QR CODE
+// =====================
+let qrDiv = document.createElement("div");
+
+new QRCode(qrDiv, {
+    text: "Verifikasi:\nNama: " + nama + "\nVA: " + va + "\n" + saldo,
+    width: 80,
+    height: 80
 });
 
-};
+let qrImg = qrDiv.querySelector("img");
 
+await new Promise(resolve => qrImg.onload = resolve);
 
-// =====================
-// FUNCTION ISI PDF
-// =====================
-function generateContent(){
-
-// JUDUL
-doc.setFontSize(12);
-doc.setFont(undefined, "bold");
-doc.text("LAPORAN TABUNGAN UMROH", 105, 38, { align: "center" });
-
+doc.addImage(qrImg.src, "PNG", 170, 35, 25, 25);
 
 // =====================
-// DATA AKUN
+// WATERMARK (HALUS)
 // =====================
-doc.setFontSize(10);
+let watermark = new Image();
+watermark.src = "img/watermark.png";
 
-doc.text("Nama Jamaah : " + nama, 15, 50);
-doc.text("No VA        : " + va, 15, 56);
-doc.text("Catatan      : " + catatan, 15, 62);
+await new Promise(resolve => watermark.onload = resolve);
 
-doc.text("Total Tabungan : " + saldo, 120, 50);
-doc.text(targetText, 120, 56);
-doc.text("Progress : " + progressText, 120, 62);
+doc.setGState(new doc.GState({ opacity: 0.08 }));
 
-doc.line(15, 68, 195, 68);
+// tengah halaman
+doc.addImage(watermark, "PNG", 40, 90, 130, 80);
 
+doc.setGState(new doc.GState({ opacity: 1 }));
 
 // =====================
-// TABEL
+// TABEL HEADER
 // =====================
-let startY = 75;
+let startY = 60;
 
-doc.setFont(undefined, "bold");
+doc.setFont("helvetica", "bold");
 doc.text("Tanggal", 15, startY);
 doc.text("Nominal", 80, startY);
 doc.text("Saldo", 150, startY);
 
 doc.line(15, startY + 2, 195, startY + 2);
 
+doc.setFont("helvetica", "normal");
+
+// =====================
+// DATA TRANSAKSI
+// =====================
 let rows = document.querySelectorAll("#transaksi tr");
 
-doc.setFont(undefined, "normal");
+let y = startY + 8;
 
-let y = startY + 10;
+rows.forEach((row, i) => {
 
-rows.forEach((row) => {
+    let cols = row.querySelectorAll("td");
 
-let cols = row.querySelectorAll("td");
+    let tgl = cols[0].innerText;
+    let nominal = cols[1].innerText;
+    let saldoRow = cols[2].innerText;
 
-if(cols.length >= 3){
+    // pindah halaman kalau penuh
+    if (y > 270) {
+        doc.addPage();
+        y = 20;
+    }
 
-doc.text(cols[0].innerText, 15, y);
-doc.text(cols[1].innerText, 80, y);
-doc.text(cols[2].innerText, 150, y);
+    doc.text(tgl, 15, y);
+    doc.text(nominal, 80, y);
+    doc.text(saldoRow, 150, y);
 
-y += 7;
-
-if(y > 280){
-
-doc.addPage();
-
-// watermark halaman baru
-doc.addImage(watermark, "PNG", 40, 120, 120, '', 'FAST');
-
-// QR ulang di halaman baru
-QRCode.toDataURL(qrData, function (err, url) {
-doc.addImage(url, "PNG", 160, 15, 30, 30);
+    y += 6;
 });
-
-y = 30;
-}
-
-}
-
-});
-
 
 // =====================
 // FOOTER
 // =====================
-let tanggalCetak = new Date().toLocaleDateString("id-ID");
+let today = new Date().toLocaleDateString("id-ID");
 
 doc.setFontSize(8);
-doc.text("Dicetak pada: " + tanggalCetak, 15, 290);
-
+doc.text("Dicetak pada: " + today, 15, 290);
 
 // =====================
 // SAVE
 // =====================
-doc.save("laporan_tabungan_umroh.pdf");
-
-}
+doc.save("Laporan_Tabungan_Umroh.pdf");
 
 }
