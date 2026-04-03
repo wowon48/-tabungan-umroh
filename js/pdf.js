@@ -14,45 +14,44 @@ let progressText = document.getElementById("progress-text").innerText;
 let targetText = document.getElementById("target-text").innerText;
 
 // =====================
-// QR
+// QR DATA (UNIK)
 // =====================
 let qrData = `ELHAKIM|${nama}|${va}|${saldo}`;
 
+
 // =====================
-// LOGO
+// LOAD LOGO
 // =====================
 let logo = new Image();
 logo.src = "img/logo.png";
 
 logo.onload = function(){
 
-// =====================
-// HEADER
-// =====================
-doc.addImage(logo, "PNG", 15, 10, 20, 20);
+// HEADER LOGO
+doc.addImage(logo, "PNG", 50, 25, 25);
 
-doc.setFontSize(13);
+// =====================
+// HEADER TEXT
+// =====================
+doc.setFontSize(14);
 doc.setFont(undefined, "bold");
-doc.text("ELHAKIM TRAVEL UMROH HAJI", 40, 17);
+doc.text("ELHAKIM TRAVEL UMROH HAJI", 45, 18);
 
-doc.setFontSize(8);
+doc.setFontSize(9);
 doc.setFont(undefined, "normal");
-doc.text("Jl. Ki Mangun Sarkoro Tulungagung", 40, 22);
+doc.text("Jl. Ki Mangun Sarkoro A7 Villa Satwika Tulungagung", 45, 24);
 
 doc.line(15, 30, 195, 30);
 
 
 // =====================
-// WATERMARK (SUPER HALUS)
+// WATERMARK
 // =====================
-doc.setTextColor(230);
-doc.setFontSize(50);
-doc.text("ELHAKIM", 55, 160, { angle: 45 });
-doc.setTextColor(0);
+doc.addImage(logo, "PNG", 40, 90, 120, 120, '', 'FAST');
 
 
 // =====================
-// QR CODE
+// QR CODE GENERATE
 // =====================
 QRCode.toDataURL(qrData, function (err, url) {
 
@@ -67,50 +66,49 @@ generateContent();
 
 
 // =====================
-// ISI PDF
+// FUNCTION ISI PDF
 // =====================
 function generateContent(){
 
 // JUDUL
 doc.setFontSize(12);
 doc.setFont(undefined, "bold");
-doc.text("LAPORAN TABUNGAN UMROH", 105, 40, { align: "center" });
+doc.text("LAPORAN TABUNGAN UMROH", 105, 38, { align: "center" });
 
 
 // =====================
 // DATA AKUN
 // =====================
 doc.setFontSize(10);
-doc.setFont(undefined, "normal");
 
-doc.text("Nama Jamaah : " + nama, 15, 55);
-doc.text("No VA        : " + va, 15, 62);
-doc.text("Catatan      : " + catatan, 15, 69);
+doc.text("Nama Jamaah : " + nama, 15, 50);
+doc.text("No VA        : " + va, 15, 56);
+doc.text("Catatan      : " + catatan, 15, 62);
 
-doc.text("Total Tabungan : " + saldo, 120, 55);
-doc.text(targetText, 120, 62);
-doc.text("Progress : " + progressText, 120, 69);
+doc.text("Total Tabungan : " + saldo, 120, 50);
+doc.text(targetText, 120, 56);
+doc.text("Progress : " + progressText, 120, 62);
 
-// garis
-doc.line(15, 75, 195, 75);
+doc.line(15, 68, 195, 68);
 
 
 // =====================
 // TABEL
 // =====================
-let y = 85;
+let startY = 75;
 
 doc.setFont(undefined, "bold");
-doc.text("Tanggal", 15, y);
-doc.text("Nominal", 80, y);
-doc.text("Saldo", 150, y);
+doc.text("Tanggal", 15, startY);
+doc.text("Nominal", 80, startY);
+doc.text("Saldo", 150, startY);
 
-doc.line(15, y+2, 195, y+2);
-
-doc.setFont(undefined, "normal");
-y += 10;
+doc.line(15, startY + 2, 195, startY + 2);
 
 let rows = document.querySelectorAll("#transaksi tr");
+
+doc.setFont(undefined, "normal");
+
+let y = startY + 10;
 
 rows.forEach((row) => {
 
@@ -124,18 +122,19 @@ doc.text(cols[2].innerText, 150, y);
 
 y += 7;
 
-// PAGE BREAK
 if(y > 280){
 
 doc.addPage();
 
-// watermark ulang (halus)
-doc.setTextColor(230);
-doc.setFontSize(50);
-doc.text("ELHAKIM", 55, 160, { angle: 45 });
-doc.setTextColor(0);
+// watermark halaman baru
+doc.addImage(watermark, "PNG", 40, 120, 120, '', 'FAST');
 
-y = 20;
+// QR ulang di halaman baru
+QRCode.toDataURL(qrData, function (err, url) {
+doc.addImage(url, "PNG", 160, 15, 30, 30);
+});
+
+y = 30;
 }
 
 }
@@ -146,13 +145,15 @@ y = 20;
 // =====================
 // FOOTER
 // =====================
-let tgl = new Date().toLocaleDateString("id-ID");
+let tanggalCetak = new Date().toLocaleDateString("id-ID");
 
 doc.setFontSize(8);
-doc.text("Dicetak: " + tgl, 15, 290);
+doc.text("Dicetak pada: " + tanggalCetak, 15, 290);
 
 
+// =====================
 // SAVE
+// =====================
 doc.save("laporan_tabungan_umroh.pdf");
 
 }
