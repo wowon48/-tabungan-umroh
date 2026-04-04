@@ -21,11 +21,11 @@ doc.addImage(img, "PNG", 15, 10, 50, 15);
 // =====================
 doc.setFontSize(14);
 doc.setFont(undefined, "bold");
-doc.text("ELHAKIM TRAVEL UMROH HAJI", 45, 18, { align: "center" });
+doc.text("ELHAKIM TRAVEL UMROH HAJI", 105, 18, { align: "center" });
 
 doc.setFontSize(9);
 doc.setFont(undefined, "normal");
-doc.text("Jl. Ki Mangun Sarkoro A7 Villa Satwika Tulungagung", 45, 24, { align: "center" });
+doc.text("Jl. Ki Mangun Sarkoro A7 Villa Satwika Tulungagung", 105, 24, { align: "center" });
 
 // garis
 doc.line(15, 30, 195, 30);
