@@ -1,134 +1,157 @@
 function downloadPDF(){
 
-const { jsPDF } = window.jspdf;
+  const { jsPDF } = window.jspdf;
+  let doc = new jsPDF();
 
-let doc = new jsPDF();
+  let img = new Image();
+  img.src = "img/logo.png";
 
-// =====================
-// LOGO (FIX BIAR GA MLETOT)
-// =====================
-let img = new Image();
-img.src = "img/logo.png";
-let watermark = new Image();
-watermark.src = "img/watermark.png";
-  
-img.onload = function(){
+  let watermark = new Image();
+  watermark.src = "img/watermark.png";
 
-// ukuran logo diperkecil biar proporsional
-doc.addImage(img, "PNG", 15, 10, 50, 15);
-  
-// =====================
-// Watermark
-// =====================
-doc.addImage(watermark, "PNG", 40, 90, 120, 36,);
+  img.onload = function(){
 
-// =====================
-// HEADER
-// =====================
-doc.setFontSize(14);
-doc.setFont(undefined, "bold");
-doc.text("ELHAKIM TRAVEL UMROH HAJI", 105, 18, { align: "center" });
+    let pageWidth = doc.internal.pageSize.getWidth();
+    let pageHeight = doc.internal.pageSize.getHeight();
 
-doc.setFontSize(9);
-doc.setFont(undefined, "normal");
-doc.text("Jl. Ki Mangun Sarkoro A7 Villa Satwika Tulungagung", 105, 24, { align: "center" });
+    // =====================
+    // DATA
+    // =====================
+    let nama = document.getElementById("nama").innerText;
+    let saldo = document.getElementById("saldo").innerText;
+    let va = document.getElementById("va").innerText;
+    let catatan = document.getElementById("catatan").innerText;
+    let progressText = document.getElementById("progress-text").innerText;
+    let targetText = document.getElementById("target-text").innerText;
+    let tanggalCetak = new Date().toLocaleDateString("id-ID");
 
-// garis
-doc.line(15, 30, 195, 30);
+    // =====================
+    // HEADER (SEMUA HALAMAN)
+    // =====================
+    function drawHeader(){
 
+      // logo
+      doc.addImage(img, "PNG", 15, 10, 50, 15);
 
-// =====================
-// JUDUL
-// =====================
-doc.setFontSize(12);
-doc.setFont(undefined, "bold");
-doc.text("LAPORAN TABUNGAN UMROH", 105, 38, { align: "center" });
+      // watermark
+      doc.addImage(watermark, "PNG", 70, 90, 120, 36);
 
+      // title
+      doc.setFontSize(14);
+      doc.setFont(undefined, "bold");
+      doc.text("ELHAKIM TRAVEL UMROH HAJI", pageWidth / 2, 18, { align: "center" });
 
-// =====================
-// DATA AKUN
-// =====================
-let nama = document.getElementById("nama").innerText;
-let saldo = document.getElementById("saldo").innerText;
-let va = document.getElementById("va").innerText;
-let catatan = document.getElementById("catatan").innerText;
-let progressText = document.getElementById("progress-text").innerText;
-let targetText = document.getElementById("target-text").innerText;
+      doc.setFontSize(9);
+      doc.setFont(undefined, "normal");
+      doc.text("Jl. Ki Mangun Sarkoro A7 Villa Satwika Tulungagung", pageWidth / 2, 24, { align: "center" });
 
-doc.setFontSize(10);
-doc.setFont(undefined, "normal");
+      // garis
+      doc.line(15, 30, 195, 30);
 
-doc.text("Nama Jamaah : " + nama, 15, 50);
-doc.text("No VA        : " + va, 15, 56);
-doc.text("Catatan      : " + catatan, 15, 62);
+      // judul
+      doc.setFontSize(12);
+      doc.setFont(undefined, "bold");
+      doc.text("LAPORAN TABUNGAN UMROH", pageWidth / 2, 38, { align: "center" });
 
-doc.text("Total Tabungan : " + saldo, 120, 50);
-doc.text(targetText, 120, 56);
-doc.text("Progress : " + progressText, 120, 62);
+      // data akun
+      doc.setFontSize(10);
+      doc.setFont(undefined, "normal");
 
-// garis
-doc.line(15, 68, 195, 68);
+      doc.text("Nama Jamaah : " + nama, 15, 50);
+      doc.text("No VA        : " + va, 15, 56);
+      doc.text("Catatan      : " + catatan, 15, 62);
 
+      doc.text("Total Tabungan : " + saldo, 120, 50);
+      doc.text(targetText, 120, 56);
+      doc.text("Progress : " + progressText, 120, 62);
 
-// =====================
-// TABEL TRANSAKSI
-// =====================
-let startY = 75;
+      doc.line(15, 68, 195, 68);
+    }
 
-doc.setFont(undefined, "bold");
-doc.text("Tanggal", 15, startY);
-doc.text("Nominal", 80, startY);
-doc.text("Saldo", 150, startY);
+    // =====================
+    // HEADER TABEL
+    // =====================
+    function drawTableHeader(y){
+      doc.setFont(undefined, "bold");
+      doc.text("Tanggal", 15, y);
+      doc.text("Nominal", 80, y);
+      doc.text("Saldo", 150, y);
 
-doc.line(15, startY + 2, 195, startY + 2);
+      doc.line(15, y + 2, 195, y + 2);
+    }
 
-// ambil data dari tabel HTML
-let rows = document.querySelectorAll("#transaksi tr");
+    // =====================
+    // START
+    // =====================
+    drawHeader();
 
-doc.setFont(undefined, "normal");
+    let startY = 75;
+    drawTableHeader(startY);
 
-let y = startY + 10;
+    let rows = document.querySelectorAll("#transaksi tr");
 
-rows.forEach((row, i) => {
+    let y = startY + 10;
+    let rowIndex = 0;
 
-let cols = row.querySelectorAll("td");
+    doc.setFont(undefined, "normal");
 
-if(cols.length >= 3){
+    rows.forEach((row) => {
 
-doc.text(cols[0].innerText, 15, y);
-doc.text(cols[1].innerText, 80, y);
-doc.text(cols[2].innerText, 150, y);
+      let cols = row.querySelectorAll("td");
 
-y += 7;
+      if(cols.length >= 3){
 
-// auto page break
-if(y > 280){
-doc.addPage();
-y = 20;
-}
+        // PAGE BREAK
+        if(y > 270){
+          doc.addPage();
+          drawHeader();
+          drawTableHeader(75);
+          y = 85;
+          rowIndex = 0;
+        }
 
-}
+        // =====================
+        // ZEBRA ROW
+        // =====================
+        if(rowIndex % 2 === 1){
+          doc.setFillColor(240, 240, 240);
+          doc.rect(15, y - 5, 180, 7, "F");
+        }
 
-});
+        // TEXT
+        doc.setTextColor(0,0,0);
+        doc.text(cols[0].innerText, 15, y);
+        doc.text(cols[1].innerText, 80, y);
+        doc.text(cols[2].innerText, 150, y);
 
+        y += 7;
+        rowIndex++;
+      }
 
-// =====================
-// FOOTER
-// =====================
-let tanggalCetak = new Date().toLocaleDateString("id-ID");
+    });
 
-doc.setFontSize(8);
-doc.text("Dicetak pada: " + tanggalCetak, 15, 290);
+    // =====================
+    // FOOTER + PAGE NUMBER
+    // =====================
+    let totalPages = doc.getNumberOfPages();
 
-  
+    for(let i = 1; i <= totalPages; i++){
+      doc.setPage(i);
 
+      doc.setFontSize(8);
 
-  
-// =====================
-// SAVE
-// =====================
-doc.save("laporan_tabungan_umroh.pdf");
+      // kiri
+      doc.text("Dicetak pada: " + tanggalCetak, 15, 290);
 
-};
+      // kanan
+      doc.text("Page " + i + " / " + totalPages, pageWidth - 15, 290, { align: "right" });
+    }
+
+    // =====================
+    // SAVE
+    // =====================
+    doc.save("laporan_tabungan_umroh.pdf");
+
+  };
 
 }
