@@ -120,11 +120,6 @@ function downloadPDF(){
         doc.text(formatRupiah(cols[1].innerText), 120, y, { align: "right" });
         doc.text(formatRupiah(cols[2].innerText), 195, y, { align: "right" });
 
-        // Garis header
-
-      doc.setLineWidth(0.5);
-      doc.line(15, y + 2, 195, y + 2);
-
       doc.setLineWidth(0.2);
       doc.setFont(undefined, "normal");
         // GARIS BAWAH
