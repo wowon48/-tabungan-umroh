@@ -9,7 +9,9 @@ let doc = new jsPDF();
 // =====================
 let img = new Image();
 img.src = "img/logo.png";
-
+let watermark = new Image();
+watermark.src = "img/watermark.png";
+  
 img.onload = function(){
 
 // ukuran logo diperkecil biar proporsional
