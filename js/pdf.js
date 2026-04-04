@@ -12,14 +12,7 @@ function downloadPDF(){
   img.onload = function(){
 
     let pageWidth = doc.internal.pageSize.getWidth();
-
-    // =====================
-    // FORMAT RUPIAH
-    // =====================
-    function formatRupiah(angka){
-      return "Rp " + parseInt(angka.replace(/[^0-9]/g, "") || 0)
-        .toLocaleString("id-ID");
-    }
+    let pageHeight = doc.internal.pageSize.getHeight();
 
     // =====================
     // DATA
@@ -61,7 +54,7 @@ function downloadPDF(){
       doc.text("No VA        : " + va, 15, 56);
       doc.text("Catatan      : " + catatan, 15, 62);
 
-      doc.text("Total Tabungan : " + formatRupiah(saldo), 120, 50);
+      doc.text("Total Tabungan : " + saldo, 120, 50);
       doc.text(targetText, 120, 56);
       doc.text("Progress : " + progressText, 120, 62);
 
@@ -82,7 +75,7 @@ function downloadPDF(){
       doc.line(15, y + 2, 195, y + 2);
 
       doc.setLineWidth(0.2);
-      doc.setFont(undefined, "normal");
+      doc.setFont(undefined, "normal"); // reset biar aman
     }
 
     // =====================
@@ -96,6 +89,7 @@ function downloadPDF(){
     let rows = document.querySelectorAll("#transaksi tr");
 
     let y = startY + 10;
+    let rowIndex = 0;
 
     rows.forEach((row) => {
 
@@ -109,25 +103,25 @@ function downloadPDF(){
           drawHeader();
           drawTableHeader(75);
           y = 85;
+          rowIndex = 0;
         }
 
-        // pastikan normal
+        // ✅ PASTIKAN FONT NORMAL SETIAP ROW
         doc.setFont(undefined, "normal");
         doc.setTextColor(0,0,0);
 
         // TEXT
         doc.text(cols[0].innerText, 15, y);
-        doc.text(formatRupiah(cols[1].innerText), 120, y, { align: "right" });
-        doc.text(formatRupiah(cols[2].innerText), 195, y, { align: "right" });
+        doc.text(cols[1].innerText, 120, y, { align: "right" });
+        doc.text(cols[2].innerText, 195, y, { align: "right" });
 
-      doc.setLineWidth(0.2);
-      doc.setFont(undefined, "normal");
-        // GARIS BAWAH
-        doc.setDrawColor(220, 220, 220);
+        // ✅ GARIS BAWAH TIAP TRANSAKSI
+        doc.setDrawColor(200, 200, 200);
         doc.setLineWidth(0.2);
         doc.line(15, y + 2, 195, y + 2);
 
         y += 7;
+        rowIndex++;
       }
 
     });
@@ -141,6 +135,7 @@ function downloadPDF(){
       doc.setPage(i);
 
       doc.setFontSize(8);
+
       doc.text("Dicetak pada: " + tanggalCetak, 15, 290);
       doc.text("Page " + i + " / " + totalPages, pageWidth - 15, 290, { align: "right" });
     }
