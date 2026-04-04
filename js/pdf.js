@@ -14,7 +14,11 @@ img.onload = function(){
 
 // ukuran logo diperkecil biar proporsional
 doc.addImage(img, "PNG", 15, 10, 50, 15);
-
+  
+// =====================
+// Watermark
+// =====================
+doc.addImage(watermark, "PNG", 40, 90, 120, 120,);
 
 // =====================
 // HEADER
@@ -115,10 +119,7 @@ doc.setFontSize(8);
 doc.text("Dicetak pada: " + tanggalCetak, 15, 290);
 
   
-// =====================
-// Watermark
-// =====================
-doc.addImage(watermark, "PNG", 40, 90, 120, 120, '', 'FAST');
+
 
   
 // =====================
