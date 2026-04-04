@@ -13,7 +13,7 @@ img.src = "img/logo.png";
 img.onload = function(){
 
 // ukuran logo diperkecil biar proporsional
-doc.addImage(img, "PNG", 15, 10, 60, 24);
+doc.addImage(img, "PNG", 15, 10, 40, 12);
 
 
 // =====================
