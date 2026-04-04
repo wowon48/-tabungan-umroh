@@ -20,7 +20,7 @@ doc.addImage(img, "PNG", 15, 10, 50, 15);
 // =====================
 // Watermark
 // =====================
-doc.addImage(watermark, "PNG", 40, 90, 120, 120,);
+doc.addImage(watermark, "PNG", 40, 90, 120, 36,);
 
 // =====================
 // HEADER
