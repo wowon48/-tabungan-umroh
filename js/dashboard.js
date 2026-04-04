@@ -85,8 +85,8 @@ data.transaksi.forEach(t=>{
   transaksiHTML += `
   <tr>
     <td>${tanggal}</td>
-    <td>+ ${t.nominal.toLocaleString("id-ID")}</td>
-    <td>${t.saldo.toLocaleString("id-ID")}</td>
+    <td>+ Rp ${t.nominal.toLocaleString("id-ID")}</td>
+    <td>Rp ${t.saldo.toLocaleString("id-ID")}</td>
   </tr>
   `;
 });
