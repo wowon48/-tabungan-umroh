@@ -26,17 +26,13 @@ function downloadPDF(){
     let tanggalCetak = new Date().toLocaleDateString("id-ID");
 
     // =====================
-    // HEADER (SEMUA HALAMAN)
+    // HEADER
     // =====================
     function drawHeader(){
 
-      // logo
       doc.addImage(img, "PNG", 15, 10, 50, 15);
-
-      // watermark
       doc.addImage(watermark, "PNG", 40, 150, 120, 36);
 
-      // title
       doc.setFontSize(14);
       doc.setFont(undefined, "bold");
       doc.text("ELHAKIM TRAVEL UMROH HAJI", pageWidth / 2, 18, { align: "center" });
@@ -45,15 +41,12 @@ function downloadPDF(){
       doc.setFont(undefined, "normal");
       doc.text("Jl. Ki Mangun Sarkoro A7 Villa Satwika Tulungagung", pageWidth / 2, 24, { align: "center" });
 
-      // garis
       doc.line(15, 30, 195, 30);
 
-      // judul
       doc.setFontSize(12);
       doc.setFont(undefined, "bold");
       doc.text("LAPORAN TABUNGAN UMROH", pageWidth / 2, 38, { align: "center" });
 
-      // data akun
       doc.setFontSize(10);
       doc.setFont(undefined, "normal");
 
@@ -73,11 +66,16 @@ function downloadPDF(){
     // =====================
     function drawTableHeader(y){
       doc.setFont(undefined, "bold");
-      doc.text("Tanggal", 15, y);
-      doc.text("Nominal", 80, y);
-      doc.text("Saldo", 150, y);
 
+      doc.text("Tanggal", 15, y);
+      doc.text("Nominal", 120, y, { align: "right" });
+      doc.text("Saldo", 195, y, { align: "right" });
+
+      doc.setLineWidth(0.5);
       doc.line(15, y + 2, 195, y + 2);
+
+      doc.setLineWidth(0.2);
+      doc.setFont(undefined, "normal"); // reset biar aman
     }
 
     // =====================
@@ -92,8 +90,6 @@ function downloadPDF(){
 
     let y = startY + 10;
     let rowIndex = 0;
-
-    doc.setFont(undefined, "normal");
 
     rows.forEach((row) => {
 
@@ -110,19 +106,19 @@ function downloadPDF(){
           rowIndex = 0;
         }
 
-        // =====================
-        // ZEBRA ROW
-        // =====================
-        if(rowIndex % 2 === 1){
-          doc.setFillColor(240, 240, 240);
-          doc.rect(15, y - 5, 180, 7, "F");
-        }
+        // ✅ PASTIKAN FONT NORMAL SETIAP ROW
+        doc.setFont(undefined, "normal");
+        doc.setTextColor(0,0,0);
 
         // TEXT
-        doc.setTextColor(0,0,0);
         doc.text(cols[0].innerText, 15, y);
-        doc.text(cols[1].innerText, 80, y);
-        doc.text(cols[2].innerText, 150, y);
+        doc.text(cols[1].innerText, 120, y, { align: "right" });
+        doc.text(cols[2].innerText, 195, y, { align: "right" });
+
+        // ✅ GARIS BAWAH TIAP TRANSAKSI
+        doc.setDrawColor(200, 200, 200);
+        doc.setLineWidth(0.2);
+        doc.line(15, y + 2, 195, y + 2);
 
         y += 7;
         rowIndex++;
@@ -131,7 +127,7 @@ function downloadPDF(){
     });
 
     // =====================
-    // FOOTER + PAGE NUMBER
+    // FOOTER
     // =====================
     let totalPages = doc.getNumberOfPages();
 
@@ -140,10 +136,7 @@ function downloadPDF(){
 
       doc.setFontSize(8);
 
-      // kiri
       doc.text("Dicetak pada: " + tanggalCetak, 15, 290);
-
-      // kanan
       doc.text("Page " + i + " / " + totalPages, pageWidth - 15, 290, { align: "right" });
     }
 
