@@ -114,7 +114,13 @@ let tanggalCetak = new Date().toLocaleDateString("id-ID");
 doc.setFontSize(8);
 doc.text("Dicetak pada: " + tanggalCetak, 15, 290);
 
+  
+// =====================
+// Watermark
+// =====================
+doc.addImage(watermark, "PNG", 40, 90, 120, 120, '', 'FAST');
 
+  
 // =====================
 // SAVE
 // =====================
