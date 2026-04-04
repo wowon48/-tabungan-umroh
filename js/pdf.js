@@ -34,7 +34,7 @@ function downloadPDF(){
       doc.addImage(img, "PNG", 15, 10, 50, 15);
 
       // watermark
-      doc.addImage(watermark, "PNG", 70, 90, 120, 36);
+      doc.addImage(watermark, "PNG", 40, 120, 120, 36);
 
       // title
       doc.setFontSize(14);
